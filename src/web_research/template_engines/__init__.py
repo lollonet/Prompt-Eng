@@ -8,20 +8,20 @@ for maintainability and extensibility.
 
 from .base_engine import ITemplateEngine, TemplateContext, TemplateResult
 from .patroni_engine import PatroniTemplateEngine
-from .kubernetes_engine import KubernetesTemplateEngine
-from .ansible_engine import AnsibleTemplateEngine
 from .docker_engine import DockerTemplateEngine
-from .infrastructure_engine import InfrastructureTemplateEngine
+from .ansible_engine import AnsibleTemplateEngine
 from .template_factory import TemplateEngineFactory
+
+# TODO: Import remaining engines when implemented
+# from .kubernetes_engine import KubernetesTemplateEngine
+# from .infrastructure_engine import InfrastructureTemplateEngine
 
 __all__ = [
     'ITemplateEngine',
     'TemplateContext', 
     'TemplateResult',
     'PatroniTemplateEngine',
-    'KubernetesTemplateEngine',
-    'AnsibleTemplateEngine',
     'DockerTemplateEngine',
-    'InfrastructureTemplateEngine',
+    'AnsibleTemplateEngine',
     'TemplateEngineFactory'
 ]

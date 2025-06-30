@@ -829,7 +829,6 @@ async def main():
             # Initialize research orchestrator
             research_config = WebResearchConfig()
             orchestrator = ResearchOrchestrator(research_config)
-            await orchestrator._initialize_components()
             
             # Prepare user context with specific options
             user_context = {
@@ -886,22 +885,18 @@ async def main():
         
         prompt = cli.generator.generate_prompt(config)
         formatted_output = cli.format_output(prompt, args.format, config)
-        
-        # Output handling
-        if args.output:
-            with open(args.output, 'w') as f:
-                f.write(formatted_output)
-            if not args.quiet:
-                print(f"✅ Prompt written to {args.output}")
-        else:
-            print(formatted_output)
-        
-        if not args.quiet:
-            logger.info("Prompt generation completed successfully")
     
-    except Exception as e:
-        logger.error(f"Error generating prompt: {e}")
-        sys.exit(1)
+    # Output handling (moved outside the else block)
+    if args.output:
+        with open(args.output, 'w') as f:
+            f.write(formatted_output)
+        if not args.quiet:
+            print(f"✅ Prompt written to {args.output}")
+    else:
+        print(formatted_output)
+    
+    if not args.quiet:
+        logger.info("Prompt generation completed successfully")
 
 # Legacy compatibility function
 def run_legacy_examples():

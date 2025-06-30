@@ -1,0 +1,194 @@
+{
+  "known_technologies": [
+    "flask",
+    "rust",
+    "python",
+    "django",
+    "kubernetes",
+    "docker",
+    "azure",
+    "angular",
+    "gcp",
+    "vue",
+    "java",
+    "elasticsearch",
+    "terraform",
+    "grafana",
+    "mongodb",
+    "alertmanager",
+    "fastapi",
+    "postgresql",
+    "go",
+    "prometheus",
+    "docker_compose",
+    "victoria-metrics",
+    "mysql",
+    "automation",
+    "svelte",
+    "aws",
+    "spring_boot",
+    "javascript",
+    "typescript",
+    "ansible",
+    "etcd",
+    "express",
+    "patroni",
+    "react",
+    "nextjs",
+    "nginx",
+    "redis",
+    "nagios"
+  ],
+  "technology_aliases": {
+    "js": [
+      "javascript"
+    ],
+    "ts": [
+      "typescript"
+    ],
+    "k8s": [
+      "kubernetes"
+    ],
+    "pg": [
+      "postgresql"
+    ],
+    "mongo": [
+      "mongodb"
+    ],
+    "next": [
+      "nextjs"
+    ],
+    "react.js": [
+      "react"
+    ],
+    "vue.js": [
+      "vue"
+    ],
+    "node": [
+      "nodejs"
+    ],
+    "npm": [
+      "nodejs"
+    ],
+    "yarn": [
+      "nodejs"
+    ],
+    "pip": [
+      "python"
+    ],
+    "maven": [
+      "java"
+    ],
+    "gradle": [
+      "java"
+    ]
+  },
+  "technology_categories": {
+    "python": "programming_language",
+    "javascript": "programming_language",
+    "react": "frontend_framework",
+    "docker": "containerization",
+    "docker_compose": "infrastructure",
+    "ansible": "unknown",
+    "typescript": "programming_language",
+    "java": "programming_language",
+    "go": "programming_language",
+    "rust": "programming_language",
+    "vue": "frontend_framework",
+    "angular": "frontend_framework",
+    "svelte": "frontend_framework",
+    "nextjs": "fullstack_framework",
+    "express": "backend_framework",
+    "fastapi": "backend_framework",
+    "django": "backend_framework",
+    "flask": "backend_framework",
+    "postgresql": "database",
+    "mysql": "database",
+    "mongodb": "database",
+    "redis": "cache_database",
+    "elasticsearch": "search_database",
+    "kubernetes": "orchestration",
+    "terraform": "infrastructure_as_code",
+    "prometheus": "unknown",
+    "grafana": "unknown",
+    "aws": "cloud_provider",
+    "azure": "cloud_provider",
+    "gcp": "cloud_provider",
+    "patroni": "database_clustering",
+    "etcd": "distributed_storage",
+    "nagios": "monitoring",
+    "alertmanager": "unknown",
+    "victoria-metrics": "unknown",
+    "automation": "unknown",
+    "nginx": "unknown"
+  },
+  "technology_popularity": {
+    "python": 0.95,
+    "javascript": 0.98,
+    "typescript": 0.85,
+    "java": 0.9,
+    "go": 0.75,
+    "rust": 0.65,
+    "react": 0.92,
+    "vue": 0.8,
+    "angular": 0.75,
+    "svelte": 0.6,
+    "nextjs": 0.85,
+    "express": 0.88,
+    "fastapi": 0.8,
+    "django": 0.82,
+    "flask": 0.75,
+    "postgresql": 0.9,
+    "mysql": 0.85,
+    "mongodb": 0.8,
+    "redis": 0.85,
+    "elasticsearch": 0.75,
+    "docker": 0.95,
+    "kubernetes": 0.88,
+    "ansible": 0.8,
+    "terraform": 0.85,
+    "prometheus": 0.82,
+    "grafana": 0.85,
+    "aws": 0.95,
+    "azure": 0.85,
+    "gcp": 0.75,
+    "patroni": 0.6,
+    "etcd": 0.7,
+    "nagios": 0.65
+  },
+  "technology_maturity": {
+    "python": "mature",
+    "javascript": "mature",
+    "typescript": "mature",
+    "java": "mature",
+    "go": "mature",
+    "rust": "growing",
+    "react": "mature",
+    "vue": "mature",
+    "angular": "mature",
+    "svelte": "growing",
+    "nextjs": "mature",
+    "express": "mature",
+    "fastapi": "mature",
+    "django": "mature",
+    "flask": "mature",
+    "postgresql": "mature",
+    "mysql": "mature",
+    "mongodb": "mature",
+    "redis": "mature",
+    "elasticsearch": "mature",
+    "docker": "mature",
+    "kubernetes": "mature",
+    "ansible": "mature",
+    "terraform": "mature",
+    "prometheus": "mature",
+    "grafana": "mature",
+    "aws": "mature",
+    "azure": "mature",
+    "gcp": "mature",
+    "patroni": "mature",
+    "etcd": "mature",
+    "nagios": "mature"
+  },
+  "last_updated": "2025-07-01T01:00:08.289704"
+}

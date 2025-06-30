@@ -332,8 +332,9 @@ class ResearchValidator(IResearchValidator):
         max_domains = min(len(result.search_results), 8)  # Reasonable maximum
         max_types = 4  # official, community, tutorial, commercial
         
-        domain_score = min(1.0, domain_diversity / max_domains)
-        type_score = min(1.0, type_diversity / max_types)
+        # Avoid division by zero
+        domain_score = min(1.0, domain_diversity / max_domains) if max_domains > 0 else 0.0
+        type_score = min(1.0, type_diversity / max_types) if max_types > 0 else 0.0
         
         return (domain_score + type_score) / 2
     

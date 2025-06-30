@@ -10,6 +10,8 @@ import logging
 
 from .base_engine import ITemplateEngine, TemplateContext, TemplateResult
 from .patroni_engine import PatroniTemplateEngine
+from .docker_engine import DockerTemplateEngine
+from .ansible_engine import AnsibleTemplateEngine
 
 
 class TemplateEngineFactory:
@@ -29,11 +31,11 @@ class TemplateEngineFactory:
         """Register built-in template engines."""
         try:
             self.register_engine(PatroniTemplateEngine())
+            self.register_engine(DockerTemplateEngine())
+            self.register_engine(AnsibleTemplateEngine())
             
             # TODO: Register other engines as they're implemented
             # self.register_engine(KubernetesTemplateEngine())
-            # self.register_engine(AnsibleTemplateEngine())
-            # self.register_engine(DockerTemplateEngine())
             
             self._logger.info(f"Registered {len(self._engines)} template engines")
         

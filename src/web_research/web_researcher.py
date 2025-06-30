@@ -451,8 +451,8 @@ class ResearchOrchestrator(IResearchOrchestrator):
         self.config = config
         self._logger = logging.getLogger(__name__)
         
-        # Initialize components
-        self._initialize_components()
+        # Initialize components - removed async call from constructor
+        self._initialized = False
         
         # Session tracking
         self._active_sessions: Dict[str, ResearchSession] = {}
@@ -495,6 +495,11 @@ class ResearchOrchestrator(IResearchOrchestrator):
         user_context: Dict[str, Any]
     ) -> Dict[str, str]:
         """Main workflow: detect, research, validate, generate templates."""
+        # Ensure initialization
+        if not self._initialized:
+            await self._initialize_components()
+            self._initialized = True
+            
         session_id = str(uuid.uuid4())
         session = ResearchSession(
             session_id=session_id,
