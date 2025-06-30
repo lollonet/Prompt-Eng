@@ -1,0 +1,48 @@
+You are an expert {{ technologies }} developer. Your task is to implement: **{{ task_type }}**
+
+## OBJECTIVE
+{{ task_description }}
+
+## REQUIREMENTS
+{{ code_requirements }}
+
+## DELIVERABLES
+Please provide:
+1. **Complete implementation** with all necessary files
+2. **Clear code structure** with proper organization
+3. **Documentation** including setup instructions
+4. **Testing approach** with example test cases
+5. **Error handling** for common edge cases
+
+## TECHNICAL STANDARDS
+{% if best_practices %}
+### Key Practices
+{% for practice in best_practices[:3] %}
+- **{{ practice.split('\n')[0].replace('#', '').strip() }}**: Apply relevant {{ practice.split('\n')[0].replace('#', '').strip().lower() }} patterns
+{% endfor %}
+{% endif %}
+
+{% if tools %}
+### Recommended Tools
+{% for tool in tools[:3] %}
+- **{{ tool.name }}**: {{ tool.description.split('.')[0] }}
+{% endfor %}
+{% endif %}
+
+## OUTPUT FORMAT
+Structure your response with:
+```
+## Implementation Overview
+[Brief architecture description]
+
+## Code Files
+[Each file with clear filename and purpose]
+
+## Setup Instructions
+[How to run the code]
+
+## Testing Strategy
+[How to verify it works]
+```
+
+**Focus on practical, production-ready code that solves the specific requirements above.**

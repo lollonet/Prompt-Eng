@@ -1,0 +1,91 @@
+# DevOps {{ technologies_list }} Infrastructure
+
+## TASK
+Implement: **{{ task_description }}**
+
+## EXPECTED OUTPUT EXAMPLE
+```yaml
+# docker-compose.yml example
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://user:pass@db:5432/myapp
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  db:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: myapp
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+```
+
+```dockerfile
+# Dockerfile example
+FROM node:16-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+
+FROM node:16-alpine
+RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
+WORKDIR /app
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --chown=nextjs:nodejs . .
+USER nextjs
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+## REQUIREMENTS
+{{ code_requirements }}
+
+## IMPLEMENTATION STEPS
+1. **Create Dockerfile** with multi-stage build and security best practices
+2. **Setup docker-compose.yml** with service dependencies and health checks
+3. **Configure environment variables** for different deployment stages
+4. **Add Ansible playbooks** for automated deployment
+5. **Include monitoring setup** (health checks, logging)
+6. **Write deployment scripts** with rollback capabilities
+
+## SUCCESS CRITERIA
+- ✅ Containers build without errors
+- ✅ Services start up and pass health checks
+- ✅ Environment variables properly configured
+- ✅ Ansible playbook deploys successfully
+- ✅ Monitoring shows service status
+
+## QUALITY CHECKLIST
+After implementation, verify:
+- [ ] Docker images follow security best practices (non-root user)
+- [ ] All services have proper health checks configured
+- [ ] Environment variables don't contain secrets in plain text
+- [ ] Ansible playbooks are idempotent (can run multiple times)
+- [ ] Deployment includes proper backup and rollback procedures
+- [ ] Monitoring covers all critical service metrics
+
+Please implement step by step, explaining your choices for container orchestration and deployment strategy.

@@ -1,0 +1,88 @@
+You are an expert {{ technologies_list }} developer. Your task: **{{ task_type }}**
+
+## OBJECTIVE
+{{ task_description }}
+
+## REQUIREMENTS  
+{{ code_requirements }}
+
+## TECHNICAL CONTEXT
+
+### Best Practices to Apply
+{{ best_practices }}
+
+### Recommended Tools & Usage
+{{ tools }}
+
+## DELIVERABLES
+
+Provide a **complete, production-ready implementation** with:
+
+### 1. Core Implementation
+- Main application files with clear structure
+- Proper error handling and validation
+- Security measures appropriate for production
+- Performance optimizations
+- Configuration management
+
+### 2. Quality Assurance
+- Comprehensive testing strategy
+- Code documentation and comments
+- Logging and monitoring setup
+- Input validation and sanitization
+- Edge case handling
+
+### 3. Deployment & Operations
+- Setup and installation instructions
+- Environment configuration examples
+- Deployment considerations
+- Maintenance and troubleshooting guide
+
+## IMPLEMENTATION GUIDELINES
+
+**Code Standards:**
+- Use type hints/annotations where applicable
+- Follow language-specific best practices
+- Implement proper design patterns
+- Include comprehensive error handling
+- Write self-documenting code
+
+**Security Considerations:**
+- Validate all inputs
+- Implement authentication/authorization where needed
+- Secure configuration management
+- Follow principle of least privilege
+- Include security testing
+
+**Performance Requirements:**
+- Optimize for production workloads
+- Implement appropriate caching
+- Consider scalability requirements
+- Profile and optimize bottlenecks
+- Design for horizontal scaling
+
+## OUTPUT FORMAT
+
+Structure your response as:
+
+```
+## Architecture Overview
+[Brief description of the overall design and component interactions]
+
+## Implementation
+[Complete code files with clear organization]
+
+## Configuration & Setup
+[Environment setup, dependencies, and configuration]
+
+## Testing Strategy
+[Test cases, validation approaches, and quality assurance]
+
+## Deployment Guide
+[Production deployment steps and considerations]
+
+## Maintenance & Operations
+[Monitoring, troubleshooting, and operational procedures]
+```
+
+**Focus on creating robust, maintainable, production-ready code that solves the specific requirements effectively.**

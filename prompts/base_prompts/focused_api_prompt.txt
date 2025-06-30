@@ -1,0 +1,57 @@
+# Python {{ primary_tech }} API Development
+
+## TASK
+Build: **{{ task_description }}**
+
+## EXPECTED OUTPUT EXAMPLE
+```python
+# FastAPI authentication example
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.security import HTTPBearer
+from pydantic import BaseModel
+
+app = FastAPI(title="User Management API")
+security = HTTPBearer()
+
+class UserCreate(BaseModel):
+    username: str
+    email: str
+    password: str
+
+@app.post("/users/")
+async def create_user(user: UserCreate):
+    # Validation, hashing, database operations
+    return {"user_id": 123, "username": user.username}
+
+@app.get("/users/me")
+async def get_current_user(token: str = Depends(security)):
+    # JWT validation logic
+    return {"user_id": 123, "username": "john_doe"}
+```
+
+## REQUIREMENTS
+{{ code_requirements }}
+
+## IMPLEMENTATION STEPS
+1. **Define data models** with Pydantic validation
+2. **Implement authentication** (JWT tokens, password hashing)
+3. **Create API endpoints** (CRUD operations)
+4. **Add error handling** (validation errors, auth failures)
+5. **Include basic tests** (happy path + error cases)
+
+## SUCCESS CRITERIA
+- ✅ API starts without errors
+- ✅ Authentication works (login/token validation)
+- ✅ Input validation prevents invalid data
+- ✅ Error responses include helpful messages
+- ✅ Basic tests demonstrate functionality
+
+## QUALITY CHECKLIST
+After implementation, verify:
+- [ ] All endpoints have proper HTTP status codes
+- [ ] Passwords are hashed, never stored plain text
+- [ ] Error messages don't expose sensitive information
+- [ ] API includes basic documentation (FastAPI auto-docs)
+- [ ] Code follows Python naming conventions
+
+Please implement step by step, showing your reasoning for key architectural decisions.

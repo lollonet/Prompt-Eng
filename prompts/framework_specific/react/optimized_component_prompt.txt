@@ -1,0 +1,60 @@
+You are an expert React developer. Create: **{{ task_description }}**
+
+## COMPONENT REQUIREMENTS  
+{{ code_requirements }}
+
+## DELIVERABLES
+Build a production-ready React component with:
+
+### 1. Component Implementation
+- **Main component** with proper TypeScript interfaces
+- **Custom hooks** for state management and side effects  
+- **Styled components** or CSS modules for styling
+- **Prop validation** with TypeScript or PropTypes
+- **Accessibility** attributes (ARIA labels, keyboard navigation)
+
+### 2. User Experience
+- **Responsive design** that works on mobile and desktop
+- **Loading states** and error handling
+- **Form validation** with user-friendly error messages
+- **Performance optimization** (memoization, lazy loading)
+
+### 3. Quality & Testing
+- **Unit tests** with React Testing Library
+- **Component documentation** with usage examples
+- **Storybook stories** for component showcase
+- **TypeScript definitions** for all props and state
+
+## TECHNICAL STANDARDS
+{% if tools %}
+**Development Tools**: {% for tool in tools[:2] %}{{ tool.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+{% endif %}
+
+**React Patterns**:
+- Use functional components with hooks
+- Implement proper error boundaries
+- Follow compound component patterns when applicable
+- Use context for complex state sharing
+
+## OUTPUT STRUCTURE
+```
+## Component Design
+[Component hierarchy and data flow]
+
+## Implementation
+[React component files with TypeScript]
+
+## Styling Approach  
+[CSS/Styled Components implementation]
+
+## Testing Suite
+[Jest and React Testing Library tests]
+
+## Usage Examples
+[How to use the component in different scenarios]
+
+## Integration Guide
+[How to integrate with existing applications]
+```
+
+**Focus on reusable, accessible, well-tested components that follow modern React patterns.**

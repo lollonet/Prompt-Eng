@@ -3,6 +3,7 @@ import os
 import json
 from src.prompt_generator import PromptGenerator
 from src.knowledge_manager import KnowledgeManager
+from src.prompt_config import PromptConfig
 
 # Setup for tests
 @pytest.fixture
@@ -37,7 +38,7 @@ def setup_generator(tmp_path):
         json.dump({"name": "Jest", "description": "Jest tool"}, f)
     with open(kb_tools_dir / "eslint.json", 'w') as f:
         json.dump({"name": "ESLint", "description": "ESLint tool"}, f)
-    with open(kb_tools_dir / "eslint_plugin_react.json", 'w') as f:
+    with open(kb_tools_dir / "eslint-plugin-react.json", 'w') as f:
         json.dump({"name": "ESLint-plugin-react", "description": "ESLint React tool"}, f)
 
     # Create dummy prompt templates
@@ -64,18 +65,15 @@ def test_prompt_generator_generic_prompt(setup_generator):
     prompts_dir, config_path = setup_generator
     generator = PromptGenerator(prompts_dir, config_path)
 
-    technologies = ["python"]
-    task_type = "nuova funzionalità"
-    task_description = "un modulo di utilità"
-    code_requirements = "Il codice deve essere pulito e ben commentato."
-
-    prompt = generator.generate_prompt(
-        technologies=technologies,
-        task_type=task_type,
-        task_description=task_description,
-        code_requirements=code_requirements,
+    config = PromptConfig(
+        technologies=["python"],
+        task_type="nuova funzionalità",
+        task_description="un modulo di utilità",
+        code_requirements="Il codice deve essere pulito e ben commentato.",
         template_name="base_prompts/generic_code_prompt.txt"
     )
+
+    prompt = generator.generate_prompt(config)
 
     assert "Come sviluppatore esperto in python" in prompt
     assert "nuova funzionalità" in prompt
@@ -87,18 +85,15 @@ def test_prompt_generator_python_feature_prompt(setup_generator):
     prompts_dir, config_path = setup_generator
     generator = PromptGenerator(prompts_dir, config_path)
 
-    technologies = ["python"]
-    task_type = "funzionalità"
-    task_description = "un endpoint API"
-    code_requirements = "Deve essere RESTful."
-
-    prompt = generator.generate_prompt(
-        technologies=technologies,
-        task_type=task_type,
-        task_description=task_description,
-        code_requirements=code_requirements,
+    config = PromptConfig(
+        technologies=["python"],
+        task_type="funzionalità",
+        task_description="un endpoint API",
+        code_requirements="Deve essere RESTful.",
         template_name="language_specific/python/feature_prompt.txt"
     )
+
+    prompt = generator.generate_prompt(config)
 
     assert "Come sviluppatore Python esperto, implementa la seguente funzionalità: un endpoint API." in prompt
     assert "PEP8 details" in prompt
@@ -109,63 +104,96 @@ def test_prompt_generator_react_component_prompt(setup_generator):
     prompts_dir, config_path = setup_generator
     generator = PromptGenerator(prompts_dir, config_path)
 
-    technologies = ["javascript", "react"]
-    task_type = "componente UI"
-    task_description = "un bottone riutilizzabile"
-    code_requirements = "Deve essere accessibile."
-
-    prompt = generator.generate_prompt(
-        technologies=technologies,
-        task_type=task_type,
-        task_description=task_description,
-        code_requirements=code_requirements,
+    config = PromptConfig(
+        technologies=["javascript", "react"],
+        task_type="componente UI",
+        task_description="un bottone riutilizzabile",
+        code_requirements="Deve essere accessibile.",
         template_name="framework_specific/react/component_prompt.txt"
     )
+
+    prompt = generator.generate_prompt(config)
 
     assert "Come sviluppatore React esperto, crea il seguente componente UI: un bottone riutilizzabile." in prompt
     assert "ESLint Recommended details" in prompt
     assert "React Best Practices details" in prompt
     assert "Jest tool" in prompt
-    assert "Description: ESLint React tool" in prompt # Corrected assertion
+    assert "Description: ESLint React tool" in prompt # Check for ESLint-plugin-react tool
     assert "Il componente deve essere: Deve essere accessibile.. Includi test unitari con Jest e React Testing Library." in prompt
 
 def test_prompt_generator_empty_technologies(setup_generator):
     prompts_dir, config_path = setup_generator
     generator = PromptGenerator(prompts_dir, config_path)
 
-    technologies = []
-    task_type = "test"
-    task_description = "test"
-    code_requirements = "test"
-
-    prompt = generator.generate_prompt(
-        technologies=technologies,
-        task_type=task_type,
-        task_description=task_description,
-        code_requirements=code_requirements,
-        template_name="base_prompts/generic_code_prompt.txt"
-    )
-    assert "Come sviluppatore esperto in " in prompt # Should still render, but with empty technologies
-    assert "aderendo a queste best practice: ." in prompt # No best practices
-    assert "Utilizza i seguenti tool per la qualità del codice: ." in prompt # No tools
+    # Test that empty technologies raises validation error
+    with pytest.raises(ValueError, match="At least one technology must be specified"):
+        PromptConfig(
+            technologies=[],
+            task_type="test task",
+            task_description="test description", 
+            code_requirements="test requirements that are long enough",
+            template_name="base_prompts/generic_code_prompt.txt"
+        )
 
 def test_prompt_generator_invalid_template(setup_generator):
     prompts_dir, config_path = setup_generator
     generator = PromptGenerator(prompts_dir, config_path)
 
-    technologies = ["python"]
-    task_type = "test"
-    task_description = "test"
-    code_requirements = "test"
-
-    # Should fall back to generic template and log a warning
-    prompt = generator.generate_prompt(
-        technologies=technologies,
-        task_type=task_type,
-        task_description=task_description,
-        code_requirements=code_requirements,
+    config = PromptConfig(
+        technologies=["python"],
+        task_type="test task type",
+        task_description="test description",
+        code_requirements="test requirements that are long enough",
         template_name="non_existent_template.txt"
     )
+
+    # Should fall back to generic template and log a warning
+    prompt = generator.generate_prompt(config)
     assert "Come sviluppatore esperto in python" in prompt # Fallback to generic
     assert "PEP8 details" in prompt
     assert "Pylint tool" in prompt
+
+def test_prompt_config_validation():
+    """Test PromptConfig validation logic."""
+    # Test short task type validation
+    with pytest.raises(ValueError, match="Task type must be descriptive"):
+        PromptConfig(
+            technologies=["python"],
+            task_type="ab",  # Too short
+            code_requirements="test requirements that are long enough"
+        )
+    
+    # Test short code requirements validation  
+    with pytest.raises(ValueError, match="Code requirements must be detailed"):
+        PromptConfig(
+            technologies=["python"],
+            task_type="valid task type",
+            code_requirements="short"  # Too short
+        )
+    
+    # Test valid config
+    config = PromptConfig(
+        technologies=["python", "docker"],
+        task_type="valid task type",
+        code_requirements="detailed code requirements that meet minimum length"
+    )
+    assert config.technologies == ["python", "docker"]
+    assert config.task_type == "valid task type"
+
+def test_prompt_generator_legacy_method(setup_generator):
+    """Test that legacy method still works for backward compatibility."""
+    prompts_dir, config_path = setup_generator
+    generator = PromptGenerator(prompts_dir, config_path)
+
+    # Test legacy method
+    prompt = generator.generate_prompt_legacy(
+        technologies=["python"],
+        task_type="legacy test task",
+        code_requirements="legacy test requirements that are long enough",
+        task_description="legacy test description",
+        template_name="base_prompts/generic_code_prompt.txt"
+    )
+    
+    assert "Come sviluppatore esperto in python" in prompt
+    assert "legacy test task" in prompt
+    assert "PEP8 details" in prompt

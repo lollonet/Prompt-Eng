@@ -1,0 +1,84 @@
+# React {{ primary_tech }} Component Development
+
+## TASK
+Create: **{{ task_description }}**
+
+## EXPECTED OUTPUT EXAMPLE
+```tsx
+// LoginForm component example
+import React, { useState } from 'react';
+import './LoginForm.css';
+
+interface LoginFormProps {
+  onSubmit: (data: { email: string; password: string }) => void;
+  loading?: boolean;
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading = false }) => {
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.email.includes('@')) newErrors.email = 'Valid email required';
+    if (formData.password.length < 6) newErrors.password = 'Password must be 6+ characters';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateForm()) onSubmit(formData);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="login-form">
+      <div className="form-field">
+        <input
+          type="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          aria-describedby={errors.email ? 'email-error' : undefined}
+        />
+        {errors.email && <span id="email-error" className="error">{errors.email}</span>}
+      </div>
+      
+      <button type="submit" disabled={loading}>
+        {loading ? 'Logging in...' : 'Login'}
+      </button>
+    </form>
+  );
+};
+
+export default LoginForm;
+```
+
+## REQUIREMENTS
+{{ code_requirements }}
+
+## IMPLEMENTATION STEPS
+1. **Define TypeScript interfaces** for props and state
+2. **Implement form state management** using useState hook
+3. **Add input validation** with user-friendly error messages
+4. **Handle form submission** with loading states
+5. **Include accessibility** (ARIA labels, keyboard navigation)
+6. **Write basic tests** (render, user interactions, validation)
+
+## SUCCESS CRITERIA
+- ✅ Component renders without TypeScript errors
+- ✅ Form validation works (shows helpful error messages)
+- ✅ Handles loading states during submission
+- ✅ Accessible (screen reader friendly)
+- ✅ Responsive design works on mobile
+
+## QUALITY CHECKLIST
+After implementation, verify:
+- [ ] TypeScript interfaces are properly defined
+- [ ] All form inputs have proper validation
+- [ ] Error messages are clear and actionable
+- [ ] Component is keyboard navigable
+- [ ] Loading states prevent multiple submissions
+- [ ] Tests cover main user interactions
+
+Please implement step by step, explaining your design decisions for state management and user experience.

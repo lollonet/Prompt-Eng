@@ -1,0 +1,204 @@
+You are an expert React developer specializing in {{ technologies_list }}. Create: **{{ task_description }}**
+
+## COMPONENT REQUIREMENTS
+{{ code_requirements }}
+
+## TECHNICAL FOUNDATION
+
+### Frontend Development Best Practices
+{{ best_practices }}
+
+### Development Tools & Ecosystem
+{{ tools }}
+
+## REACT COMPONENT IMPLEMENTATION
+
+### 1. Component Architecture
+**Build a production-ready component with:**
+- **TypeScript interfaces** for all props, state, and data structures
+- **Custom hooks** for business logic and state management
+- **Compound components** for complex UI patterns when appropriate
+- **Context providers** for shared state across component tree
+- **Error boundaries** for graceful error handling
+- **Proper component composition** with clear separation of concerns
+
+### 2. State Management & Data Flow
+**Implement effective state handling:**
+- **Local state** with useState for simple component state
+- **Complex state** with useReducer for state machines
+- **Side effects** with useEffect and proper cleanup
+- **Performance optimization** with useMemo, useCallback
+- **Global state** with Context API or external libraries when needed
+- **Form state** with controlled components and validation
+
+### 3. User Experience & Accessibility
+**Ensure inclusive design:**
+- **Responsive layout** that works on mobile, tablet, and desktop
+- **Accessibility attributes** (ARIA labels, roles, keyboard navigation)
+- **Loading states** with skeletons or spinners
+- **Error states** with user-friendly error messages
+- **Empty states** with helpful guidance
+- **Progressive enhancement** for better user experience
+
+### 4. Performance & Quality
+**Optimize for production:**
+- **Component memoization** to prevent unnecessary re-renders
+- **Lazy loading** for code splitting and bundle optimization
+- **Virtual scrolling** for large lists
+- **Debounced inputs** for search and filtering
+- **Image optimization** with proper loading strategies
+- **Bundle analysis** and performance monitoring
+
+## SPECIFIC REACT PATTERNS
+
+**Modern Hook Patterns:**
+```tsx
+// Custom hook for data fetching
+const useApiData = <T>(url: string) => {
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  useEffect(() => {
+    // Fetch implementation with cleanup
+  }, [url]);
+  
+  return { data, loading, error };
+};
+
+// Form handling with validation
+const useFormValidation = <T>(initialState: T, validate: (values: T) => ValidationErrors) => {
+  // Implementation here
+};
+```
+
+**Component Composition:**
+```tsx
+// Compound component pattern
+const Card = ({ children, ...props }) => (
+  <div className="card" {...props}>{children}</div>
+);
+Card.Header = ({ children }) => <div className="card-header">{children}</div>;
+Card.Body = ({ children }) => <div className="card-body">{children}</div>;
+Card.Footer = ({ children }) => <div className="card-footer">{children}</div>;
+```
+
+**Error Boundary Pattern:**
+```tsx
+class ComponentErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  
+  render() {
+    if (this.state.hasError) {
+      return <ErrorFallback error={this.state.error} />;
+    }
+    return this.props.children;
+  }
+}
+```
+
+**Performance Optimization:**
+```tsx
+// Memoized component
+const ExpensiveComponent = React.memo(({ data, onUpdate }) => {
+  // Component implementation
+}, (prevProps, nextProps) => {
+  // Custom comparison function
+});
+
+// Optimized event handlers
+const handleSubmit = useCallback((data) => {
+  // Submit logic
+}, [dependency]);
+```
+
+## TESTING IMPLEMENTATION
+
+**Comprehensive test coverage:**
+```tsx
+// Component testing with React Testing Library
+describe('ComponentName', () => {
+  it('renders with correct initial state', () => {
+    render(<ComponentName />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+  
+  it('handles user interactions correctly', async () => {
+    const user = userEvent.setup();
+    render(<ComponentName />);
+    await user.click(screen.getByRole('button'));
+    expect(screen.getByText('Updated')).toBeInTheDocument();
+  });
+});
+
+// Custom hook testing
+const { result } = renderHook(() => useCustomHook());
+expect(result.current.value).toBe(expected);
+```
+
+## DELIVERABLES
+
+### 1. Component Implementation
+- **Main component** with TypeScript interfaces
+- **Custom hooks** for reusable logic
+- **Styled components** or CSS modules
+- **Utility functions** and helpers
+- **Type definitions** for all data structures
+
+### 2. Testing & Quality
+- **Unit tests** with React Testing Library
+- **Integration tests** for user workflows
+- **Accessibility tests** with axe-core
+- **Visual regression tests** with Storybook
+- **Performance tests** and bundle analysis
+
+### 3. Documentation & Integration
+- **Component documentation** with usage examples
+- **Storybook stories** for component showcase
+- **Props interface documentation**
+- **Integration guide** for existing applications
+- **Design system integration** if applicable
+
+### 4. Development Tools Setup
+- **ESLint configuration** with React rules
+- **TypeScript configuration** optimized for React
+- **Testing setup** with Jest and React Testing Library
+- **Build optimization** for production
+- **Hot reloading** for development
+
+## OUTPUT STRUCTURE
+
+```
+## Component Design & Architecture
+[Component hierarchy, data flow, and design decisions]
+
+## TypeScript Implementation
+[Complete component code with interfaces and types]
+
+## Styling & Responsive Design
+[CSS implementation with responsive considerations]
+
+## State Management & Hooks
+[Custom hooks and state management patterns]
+
+## Testing Implementation
+[Complete test suite with examples]
+
+## Accessibility & UX
+[Accessibility implementation and user experience considerations]
+
+## Integration & Usage
+[How to use the component in different scenarios]
+
+## Performance Optimization
+[Performance improvements and bundle optimization]
+```
+
+**Focus on creating reusable, accessible, performant React components that follow modern patterns and are ready for production use.**

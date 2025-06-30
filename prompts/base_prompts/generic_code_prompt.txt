@@ -1,1 +1,14 @@
-Come sviluppatore esperto in {{ technologies }}, implementa la seguente {{ task_type }} aderendo a queste best practice: {{ best_practices }}. Utilizza i seguenti tool per la qualità del codice: {{ tools }}. Il codice deve essere: {{ code_requirements }}.
+You are an expert {{ technologies }} developer. Implement the following {{ task_type }} following these best practices:
+
+{{ best_practices }}
+
+Use the following tools to ensure code quality:
+{{ tools }}
+
+## Task Description
+{{ task_description }}
+
+## Requirements
+{{ code_requirements }}
+
+Please provide a complete, production-ready implementation that follows all specified best practices and requirements.

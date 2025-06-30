@@ -1,0 +1,63 @@
+You are an expert DevOps engineer. Implement: **{{ task_description }}**
+
+## INFRASTRUCTURE REQUIREMENTS
+{{ code_requirements }}
+
+## DELIVERABLES
+Provide a complete infrastructure solution with:
+
+### 1. Core Infrastructure
+- **Container configuration** (Dockerfile, docker-compose.yml)
+- **Service orchestration** with proper networking and volumes
+- **Environment management** (dev, staging, prod configurations)
+- **Secrets management** with secure credential handling
+- **Health checks** and service dependencies
+
+### 2. Automation & Deployment
+- **CI/CD pipeline** configuration files
+- **Ansible playbooks** for server provisioning
+- **Infrastructure as Code** with version control
+- **Automated testing** for infrastructure components
+- **Deployment scripts** with rollback capabilities
+
+### 3. Monitoring & Operations
+- **Logging configuration** with centralized collection
+- **Monitoring setup** with alerts and dashboards
+- **Backup strategies** for data persistence
+- **Security hardening** configurations
+- **Documentation** for operations team
+
+## TECHNICAL SPECIFICATIONS
+{% if tools %}
+**Infrastructure Tools**: {% for tool in tools[:3] %}{{ tool.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+{% endif %}
+
+**Best Practices**:
+- Use immutable infrastructure patterns
+- Implement proper secret rotation
+- Follow least privilege access principles
+- Design for horizontal scaling
+- Include disaster recovery procedures
+
+## OUTPUT STRUCTURE
+```
+## Architecture Overview
+[Infrastructure diagram and component relationships]
+
+## Configuration Files
+[Docker, Ansible, CI/CD, and other config files]
+
+## Deployment Process
+[Step-by-step deployment and rollback procedures]
+
+## Monitoring & Maintenance
+[Logging, metrics, and operational procedures]
+
+## Security Implementation
+[Access controls, encryption, and security measures]
+
+## Troubleshooting Guide
+[Common issues and resolution steps]
+```
+
+**Create robust, secure, scalable infrastructure that follows DevOps best practices and is easy to maintain.**

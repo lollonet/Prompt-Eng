@@ -1,0 +1,135 @@
+You are an expert Python API developer specializing in {{ technologies_list }}. Build: **{{ task_description }}**
+
+## API REQUIREMENTS
+{{ code_requirements }}
+
+## TECHNICAL FOUNDATION
+
+### Python Development Best Practices
+{{ best_practices }}
+
+### Development Tools & Integration
+{{ tools }}
+
+## API IMPLEMENTATION REQUIREMENTS
+
+### 1. Core API Structure
+**Create a production-ready API with:**
+- **Main application module** with proper structure (app/, src/, or similar)
+- **Route handlers** with proper HTTP methods and status codes
+- **Data models** with validation (Pydantic for FastAPI, Serializers for Django)
+- **Database integration** with proper ORM usage and migrations
+- **Configuration management** using environment variables
+- **Error handling** with custom exceptions and proper HTTP responses
+
+### 2. Authentication & Security
+**Implement robust security:**
+- **Authentication system** (JWT, OAuth2, or session-based)
+- **Authorization middleware** with role-based access control
+- **Input validation** with sanitization and type checking
+- **Rate limiting** to prevent abuse
+- **CORS configuration** for cross-origin requests
+- **Security headers** (CSRF, XSS protection, etc.)
+
+### 3. Data Management
+**Handle data effectively:**
+- **Database models** with relationships and constraints
+- **Connection pooling** for database efficiency
+- **Caching strategy** (Redis, in-memory) for performance
+- **Data serialization** with proper formatting
+- **Migration system** for schema changes
+
+### 4. API Documentation & Testing
+**Ensure maintainability:**
+- **OpenAPI/Swagger documentation** with examples
+- **Unit tests** for all endpoints and business logic
+- **Integration tests** for API workflows
+- **Performance testing** for load scenarios
+- **API versioning** strategy for backward compatibility
+
+## SPECIFIC IMPLEMENTATION PATTERNS
+
+**FastAPI Patterns:**
+```python
+# Dependency injection for authentication
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    # Implementation here
+    
+# Background tasks for async operations
+@app.post("/send-email/")
+async def send_email(background_tasks: BackgroundTasks, email: EmailSchema):
+    background_tasks.add_task(send_email_task, email)
+```
+
+**Django REST Patterns:**
+```python
+# ViewSet with proper permissions
+class UserViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+    serializer_class = UserSerializer
+    
+# Custom authentication
+class CustomJWTAuthentication(BaseAuthentication):
+    # Implementation here
+```
+
+**Error Handling Pattern:**
+```python
+# Custom exception handling
+@app.exception_handler(ValidationError)
+async def validation_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=422,
+        content={"detail": exc.errors(), "type": "validation_error"}
+    )
+```
+
+## DELIVERABLES
+
+### 1. API Implementation Files
+- `main.py` or `app.py` - Application entry point
+- `models/` - Data models and database schemas  
+- `routers/` or `views/` - API endpoints and business logic
+- `auth/` - Authentication and authorization
+- `utils/` - Helper functions and utilities
+- `tests/` - Comprehensive test suite
+
+### 2. Configuration & Infrastructure
+- `requirements.txt` or `pyproject.toml` - Dependencies
+- `.env.example` - Environment variable template
+- `docker-compose.yml` - Local development setup
+- `Dockerfile` - Container configuration
+- Database migration files
+
+### 3. Documentation & Operations
+- `README.md` - Setup and usage instructions
+- API documentation (auto-generated)
+- Deployment guide for production
+- Monitoring and logging configuration
+
+## OUTPUT STRUCTURE
+
+```
+## API Architecture
+[Overall design, database schema, and endpoint structure]
+
+## Core Implementation
+[Main application files with complete code]
+
+## Authentication & Security
+[Security implementation with examples]
+
+## Database & Models
+[Data layer with relationships and migrations]
+
+## Testing Implementation
+[Test cases and validation approaches]
+
+## Configuration & Deployment
+[Environment setup and production deployment]
+
+## API Documentation
+[Usage examples with request/response samples]
+```
+
+**Create a secure, scalable, well-documented API that follows {{ primary_tech }} best practices and is ready for production deployment.**

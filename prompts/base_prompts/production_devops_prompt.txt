@@ -1,0 +1,251 @@
+You are an expert DevOps engineer specializing in {{ technologies_list }}. Implement: **{{ task_description }}**
+
+## INFRASTRUCTURE REQUIREMENTS
+{{ code_requirements }}
+
+## TECHNICAL FOUNDATION
+
+### DevOps Best Practices
+{{ best_practices }}
+
+### Infrastructure Tools & Platforms
+{{ tools }}
+
+## INFRASTRUCTURE IMPLEMENTATION
+
+### 1. Container & Orchestration
+**Build containerized infrastructure:**
+- **Dockerfile** with multi-stage builds and security best practices
+- **docker-compose.yml** for local development and testing
+- **Service networking** with proper isolation and communication
+- **Volume management** for persistent data and configuration
+- **Health checks** for all services with proper timeouts
+- **Resource limits** to prevent resource exhaustion
+
+### 2. Configuration Management
+**Implement Infrastructure as Code:**
+- **Ansible playbooks** with proper role organization
+- **Variable management** using group_vars and host_vars
+- **Vault integration** for secrets management
+- **Idempotent tasks** that can be run multiple times safely
+- **Error handling** with proper rollback strategies
+- **Testing framework** for infrastructure validation
+
+### 3. CI/CD Pipeline
+**Automate deployment workflows:**
+- **Build pipeline** with proper testing and quality gates
+- **Deployment stages** (dev, staging, production)
+- **Rollback mechanisms** for failed deployments
+- **Security scanning** for vulnerabilities
+- **Infrastructure testing** with automated validation
+- **Deployment notifications** and monitoring
+
+### 4. Monitoring & Operations
+**Ensure operational excellence:**
+- **Logging aggregation** with centralized collection
+- **Metrics collection** for performance monitoring
+- **Alerting rules** for proactive issue detection
+- **Dashboard creation** for operational visibility
+- **Backup strategies** with automated testing
+- **Disaster recovery** procedures and documentation
+
+## SPECIFIC IMPLEMENTATION PATTERNS
+
+**Docker Multi-Stage Build:**
+```dockerfile
+# Build stage
+FROM node:16-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Production stage
+FROM node:16-alpine
+RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
+WORKDIR /app
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --chown=nextjs:nodejs . .
+USER nextjs
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+**Docker Compose Service Definition:**
+```yaml
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+```
+
+**Ansible Role Structure:**
+```yaml
+# roles/application/tasks/main.yml
+- name: Deploy application configuration
+  template:
+    src: app.conf.j2
+    dest: /etc/app/config.conf
+    owner: app
+    group: app
+    mode: '0644'
+  notify: restart application
+
+- name: Ensure application is running
+  systemd:
+    name: application
+    state: started
+    enabled: yes
+  become: yes
+```
+
+**CI/CD Pipeline (GitHub Actions Example):**
+```yaml
+name: Deploy Infrastructure
+on:
+  push:
+    branches: [main]
+    
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Run infrastructure tests
+        run: |
+          ansible-playbook --check --diff playbook.yml
+          
+      - name: Deploy to staging
+        run: |
+          ansible-playbook -i staging playbook.yml
+          
+      - name: Run smoke tests
+        run: |
+          ./scripts/health-check.sh staging
+          
+      - name: Deploy to production
+        if: success()
+        run: |
+          ansible-playbook -i production playbook.yml
+```
+
+**Monitoring Configuration:**
+```yaml
+# prometheus.yml
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "alerts.yml"
+
+scrape_configs:
+  - job_name: 'application'
+    static_configs:
+      - targets: ['app:3000']
+    metrics_path: /metrics
+    scrape_interval: 5s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+```
+
+## SECURITY & COMPLIANCE
+
+**Implement security best practices:**
+- **Secrets management** with proper encryption and rotation
+- **Network segmentation** with firewalls and VPNs
+- **Access control** with least privilege principle
+- **Vulnerability scanning** in CI/CD pipelines
+- **Compliance monitoring** for regulatory requirements
+- **Audit logging** for security events
+
+**Security Configuration Examples:**
+```yaml
+# Ansible vault encrypted variables
+database_password: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  66386439653761336464343937313965...
+
+# Docker security configuration
+security_opt:
+  - no-new-privileges:true
+read_only: true
+tmpfs:
+  - /tmp:noexec,nosuid,size=100m
+```
+
+## DELIVERABLES
+
+### 1. Infrastructure Configuration
+- **Dockerfile** with security and optimization
+- **docker-compose.yml** for service orchestration
+- **Ansible playbooks** with proper role structure
+- **CI/CD pipeline** configuration files
+- **Environment-specific** configuration management
+
+### 2. Monitoring & Operations
+- **Monitoring stack** setup (Prometheus, Grafana, etc.)
+- **Logging configuration** with centralized collection
+- **Alerting rules** for critical metrics
+- **Backup scripts** with automated testing
+- **Disaster recovery** procedures
+
+### 3. Security & Compliance
+- **Security scanning** integration
+- **Access control** configuration
+- **Secrets management** implementation
+- **Network security** rules and policies
+- **Compliance reporting** and auditing
+
+### 4. Documentation & Procedures
+- **Infrastructure documentation** with diagrams
+- **Deployment procedures** and runbooks
+- **Troubleshooting guides** for common issues
+- **Security procedures** and incident response
+- **Capacity planning** and scaling guides
+
+## OUTPUT STRUCTURE
+
+```
+## Infrastructure Architecture
+[System design, component relationships, and data flow]
+
+## Configuration Files
+[Complete infrastructure code with explanations]
+
+## Deployment Automation
+[CI/CD pipeline and deployment procedures]
+
+## Monitoring & Alerting
+[Observability setup with dashboards and alerts]
+
+## Security Implementation
+[Security measures, access controls, and compliance]
+
+## Operations & Maintenance
+[Procedures for ongoing operations and troubleshooting]
+
+## Disaster Recovery
+[Backup, recovery, and business continuity procedures]
+```
+
+**Create robust, secure, scalable infrastructure that follows DevOps best practices and is production-ready with comprehensive monitoring and automation.**

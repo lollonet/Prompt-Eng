@@ -1,9 +1,12 @@
-Come sviluppatore Python esperto, implementa la seguente funzionalità: {{ task_description }}.
+You are an expert Python developer. Implement the following feature: {{ task_description }}.
 
-Assicurati di seguire le seguenti best practice:
+## Best Practices to Follow
 {{ best_practices }}
 
-Utilizza i seguenti tool per garantire la qualità del codice:
+## Code Quality Tools
 {{ tools }}
 
-Il codice deve essere: {{ code_requirements }}. Includi docstring e type hints appropriati.
+## Requirements
+{{ code_requirements }}
+
+Please include appropriate docstrings and type hints. Ensure the code is modular, testable, and follows Python best practices.
