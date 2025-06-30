@@ -1,0 +1,15 @@
+{
+    "name": "Jest",
+    "description": "Jest is a delightful JavaScript Testing Framework with a focus on simplicity. It works with projects using Babel, TypeScript, Node, React, Angular, Vue and more!",
+    "benefits": [
+        "Fast and safe unit testing",
+        "Built-in assertion library",
+        "Snapshot testing for UI components",
+        "Excellent developer experience (DX)"
+    ],
+    "usage_notes": [
+        "Tests are typically placed in a `__tests__` directory or named `*.test.js` / `*.spec.js`.",
+        "Supports mocking and spying."
+    ],
+    "example_command": "jest"
+}

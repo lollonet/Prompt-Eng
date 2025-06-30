@@ -1,0 +1,16 @@
+{
+    "name": "Pylint",
+    "description": "Pylint is a static code analysis tool for Python. It checks for programming errors, helps enforce a coding standard, sniffs for code smells, and can make suggestions about how to refactor particular blocks of code.",
+    "benefits": [
+        "Enforces coding standards (e.g., PEP 8)",
+        "Identifies potential bugs and errors early",
+        "Improves code quality and readability",
+        "Provides a code quality score"
+    ],
+    "usage_notes": [
+        "Can be integrated into CI/CD pipelines.",
+        "Configuration can be customized via a .pylintrc file.",
+        "Often used with a maximum line length check."
+    ],
+    "example_command": "pylint your_module.py"
+}

@@ -1,0 +1,1 @@
+Come sviluppatore {{ language }} esperto in {{ framework }}, implementa la seguente {{ task_type }} aderendo a queste best practice: {{ best_practices }}. Utilizza i seguenti tool per la qualità del codice: {{ tools }}. Il codice deve essere: {{ code_requirements }}.

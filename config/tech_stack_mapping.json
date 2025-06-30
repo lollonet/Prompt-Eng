@@ -1,0 +1,30 @@
+{
+    "python": {
+        "best_practices": ["PEP8", "Clean Code Principles", "Idiomatic Python"],
+        "tools": ["Pylint", "Black", "Pytest"]
+    },
+    "javascript": {
+        "best_practices": ["ESLint Recommended", "Airbnb Style Guide", "Functional Programming Principles"],
+        "tools": ["ESLint", "Prettier", "Jest"]
+    },
+    "react": {
+        "best_practices": ["React Best Practices", "Component-based Architecture", "State Management Patterns"],
+        "tools": ["ESLint-plugin-react", "Jest", "React Testing Library"]
+    },
+    "spring_boot": {
+        "best_practices": ["Spring Best Practices", "Microservices Architecture", "RESTful API Design"],
+        "tools": ["Checkstyle", "JaCoCo", "JUnit"]
+    },
+    "docker": {
+        "best_practices": ["Docker Best Practices", "Containerization Principles"],
+        "tools": ["Docker"]
+    },
+    "docker_compose": {
+        "best_practices": ["Docker Compose Best Practices", "Multi-container Application Design"],
+        "tools": ["Docker Compose"]
+    },
+    "ansible": {
+        "best_practices": ["Ansible Best Practices", "Infrastructure as Code Principles"],
+        "tools": ["Ansible"]
+    }
+}

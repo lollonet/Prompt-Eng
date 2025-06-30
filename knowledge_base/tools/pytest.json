@@ -1,0 +1,15 @@
+{
+    "name": "Pytest",
+    "description": "Pytest is a mature full-featured Python testing framework that helps you write better programs. It makes it easy to write small tests, yet scales to support complex functional testing for applications and libraries.",
+    "benefits": [
+        "Simple and expressive test syntax",
+        "Rich plugin architecture",
+        "Automatic test discovery",
+        "Detailed test reports"
+    ],
+    "usage_notes": [
+        "Tests are typically written in files starting with `test_` or ending with `_test.py`.",
+        "Fixtures provide a reliable, repeatable baseline for tests."
+    ],
+    "example_command": "pytest"
+}

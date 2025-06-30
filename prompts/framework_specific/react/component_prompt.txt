@@ -1,0 +1,9 @@
+Come sviluppatore React esperto, crea il seguente componente UI: {{ task_description }}.
+
+Assicurati di aderire alle seguenti best practice:
+{{ best_practices }}
+
+Utilizza i seguenti tool per garantire la qualità e la testabilità del codice:
+{{ tools }}
+
+Il componente deve essere: {{ code_requirements }}. Includi test unitari con Jest e React Testing Library.

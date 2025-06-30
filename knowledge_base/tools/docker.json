@@ -1,0 +1,16 @@
+{
+    "name": "Docker",
+    "description": "Docker is a platform that enables developers to build, share, run, and manage applications with containers. A container is a standard unit of software that packages up code and all its dependencies so the application runs quickly and reliably from one computing environment to another.",
+    "benefits": [
+        "Consistent environments across development, testing, and production",
+        "Application isolation and portability",
+        "Faster deployment and scaling",
+        "Resource efficiency"
+    ],
+    "usage_notes": [
+        "Requires a Dockerfile to define the container image.",
+        "Images are built from Dockerfiles and stored in registries (e.g., Docker Hub).",
+        "Containers are instances of images."
+    ],
+    "example_command": "docker build -t my-app . && docker run my-app"
+}

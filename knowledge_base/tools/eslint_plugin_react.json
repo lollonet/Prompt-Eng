@@ -1,0 +1,14 @@
+{
+    "name": "ESLint-plugin-react",
+    "description": "ESLint-plugin-react contains a set of ESLint rules that are specific to React projects. It helps enforce React best practices and catch common mistakes.",
+    "benefits": [
+        "Enforces React-specific best practices",
+        "Catches common React errors (e.g., missing keys in lists)",
+        "Improves consistency in React component development"
+    ],
+    "usage_notes": [
+        "Requires ESLint to be installed.",
+        "Configured in the `.eslintrc` file under the `plugins` and `rules` sections."
+    ],
+    "example_command": "(Used via ESLint)"
+}

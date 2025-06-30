@@ -1,0 +1,14 @@
+{
+    "name": "Black",
+    "description": "Black is an uncompromising Python code formatter. By using it, you agree to relinquish control over formatting. This leads to a consistent and predictable code style across projects and teams.",
+    "benefits": [
+        "Ensures consistent code formatting automatically",
+        "Reduces time spent on style discussions in code reviews",
+        "Improves code readability"
+    ],
+    "usage_notes": [
+        "Can be run as a pre-commit hook.",
+        "Integrates with most IDEs."
+    ],
+    "example_command": "black ."
+}

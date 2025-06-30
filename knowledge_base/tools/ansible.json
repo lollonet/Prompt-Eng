@@ -1,0 +1,16 @@
+{
+    "name": "Ansible",
+    "description": "Ansible is an open-source software provisioning, configuration management, and application-deployment tool. It runs on many Unix-like systems, and can configure both Unix-like systems as well as Microsoft Windows. It is agentless, connecting via SSH or WinRM.",
+    "benefits": [
+        "Agentless architecture (simpler setup)",
+        "Human-readable YAML syntax for playbooks",
+        "Powerful automation for IT tasks",
+        "Idempotent operations (running multiple times has same effect)"
+    ],
+    "usage_notes": [
+        "Uses playbooks written in YAML.",
+        "Relies on SSH for Linux/Unix and WinRM for Windows.",
+        "Modules provide specific functionalities (e.g., managing packages, services, files)."
+    ],
+    "example_command": "ansible-playbook site.yml"
+}
