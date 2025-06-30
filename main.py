@@ -22,7 +22,7 @@ Usage Examples:
 """
 
 from src.prompt_generator import PromptGenerator
-from src.prompt_config import PromptConfig
+from src.prompt_config import PromptConfig, SpecificOptions
 from typing import List, Tuple, Dict, Any, Optional
 import os
 import sys
@@ -449,6 +449,165 @@ For shell autocomplete:
         help='Suppress info messages, only show generated prompt'
     )
     
+    # Specific technology options
+    specific_group = parser.add_argument_group('Technology-Specific Options')
+    
+    # Infrastructure options
+    specific_group.add_argument(
+        '--distro',
+        choices=['rhel9', 'ubuntu22', 'centos8', 'debian11', 'rocky9', 'alma9'],
+        help='Linux distribution for infrastructure tasks'
+    )
+    
+    specific_group.add_argument(
+        '--cloud-provider',
+        choices=['aws', 'azure', 'gcp', 'on-premise'],
+        help='Cloud provider for infrastructure deployment'
+    )
+    
+    specific_group.add_argument(
+        '--region',
+        metavar='REGION',
+        help='Cloud region (e.g., eu-west-1, us-east-1)'
+    )
+    
+    # Database options
+    specific_group.add_argument(
+        '--db-engine',
+        choices=['patroni', 'postgresql', 'mysql', 'mongodb', 'redis', 'etcd'],
+        help='Database engine for database-related tasks'
+    )
+    
+    specific_group.add_argument(
+        '--db-version',
+        metavar='VERSION',
+        help='Database version (e.g., 14, 15, 16 for PostgreSQL)'
+    )
+    
+    specific_group.add_argument(
+        '--cluster-size',
+        type=int,
+        metavar='N',
+        help='Number of nodes in cluster setup'
+    )
+    
+    # Container/Orchestration options
+    specific_group.add_argument(
+        '--container-runtime',
+        choices=['docker', 'podman', 'containerd', 'cri-o'],
+        help='Container runtime for containerization tasks'
+    )
+    
+    specific_group.add_argument(
+        '--orchestrator',
+        choices=['k8s', 'kubernetes', 'docker-compose', 'nomad', 'etcd', 'swarm'],
+        help='Container orchestration platform'
+    )
+    
+    specific_group.add_argument(
+        '--ingress-controller',
+        choices=['nginx', 'traefik', 'haproxy', 'envoy', 'istio'],
+        help='Ingress controller for Kubernetes deployments'
+    )
+    
+    # Monitoring options
+    specific_group.add_argument(
+        '--monitoring-stack',
+        nargs='+',
+        choices=['prometheus', 'nagios', 'grafana', 'victoria-metrics', 'zabbix'],
+        help='Monitoring tools to include (can specify multiple)'
+    )
+    
+    specific_group.add_argument(
+        '--logging-stack',
+        nargs='+',
+        choices=['elk', 'elasticsearch', 'loki', 'fluentd', 'logstash', 'kibana'],
+        help='Logging tools to include (can specify multiple)'
+    )
+    
+    # Security options
+    specific_group.add_argument(
+        '--security-standards',
+        nargs='+',
+        choices=['fips140-2', 'pci-dss', 'hipaa', 'gdpr', 'sox', 'iso27001'],
+        help='Security compliance standards (can specify multiple)'
+    )
+    
+    specific_group.add_argument(
+        '--encryption',
+        choices=['tls1.3', 'aes256', 'rsa4096', 'ecdsa', 'chacha20'],
+        help='Encryption standard to use'
+    )
+    
+    # Development options
+    specific_group.add_argument(
+        '--framework-version',
+        metavar='VERSION',
+        help='Specific framework version (e.g., fastapi==0.104.1)'
+    )
+    
+    specific_group.add_argument(
+        '--testing-framework',
+        choices=['pytest', 'jest', 'cypress', 'junit', 'mocha', 'phpunit'],
+        help='Testing framework to use'
+    )
+    
+    specific_group.add_argument(
+        '--ci-cd-platform',
+        choices=['gitlab-ci', 'github-actions', 'jenkins', 'azure-devops', 'circleci'],
+        help='CI/CD platform for automation'
+    )
+    
+    # High availability options
+    specific_group.add_argument(
+        '--ha-setup',
+        action='store_true',
+        help='Enable high availability configuration'
+    )
+    
+    specific_group.add_argument(
+        '--backup-strategy',
+        choices=['continuous', 'scheduled', 'snapshot', 'incremental'],
+        help='Backup strategy for data persistence'
+    )
+    
+    specific_group.add_argument(
+        '--disaster-recovery',
+        action='store_true',
+        help='Include disaster recovery configuration'
+    )
+    
+    # Web research options
+    research_group = parser.add_argument_group('Web Research Options')
+    
+    research_group.add_argument(
+        '--auto-research',
+        action='store_true',
+        help='Enable automatic web research for unknown technologies'
+    )
+    
+    research_group.add_argument(
+        '--research-quality',
+        choices=['excellent', 'good', 'fair'],
+        default='good',
+        help='Minimum research quality threshold (default: good)'
+    )
+    
+    research_group.add_argument(
+        '--max-research-time',
+        type=int,
+        default=120,
+        metavar='SECONDS',
+        help='Maximum time for research per technology (default: 120s)'
+    )
+    
+    research_group.add_argument(
+        '--cache-research',
+        action='store_true',
+        default=True,
+        help='Cache research results for reuse (default: enabled)'
+    )
+    
     # Information commands
     info_group = parser.add_argument_group('Information Commands')
     
@@ -572,7 +731,7 @@ complete -c prompt-engineer -l version -d "Show version"
     
     return ""
 
-def main():
+async def main():
     """
     Main CLI entry point with comprehensive argument handling.
     """
@@ -621,12 +780,36 @@ def main():
         if template_name == "base_prompts/production_ready_prompt.txt":
             template_name = cli._select_optimal_template(args.tech, task_type)
         
+        # Create specific options from command line arguments
+        specific_options = SpecificOptions(
+            distro=getattr(args, 'distro', None),
+            cloud_provider=getattr(args, 'cloud_provider', None),
+            region=getattr(args, 'region', None),
+            db_engine=getattr(args, 'db_engine', None),
+            db_version=getattr(args, 'db_version', None),
+            cluster_size=getattr(args, 'cluster_size', None),
+            container_runtime=getattr(args, 'container_runtime', None),
+            orchestrator=getattr(args, 'orchestrator', None),
+            ingress_controller=getattr(args, 'ingress_controller', None),
+            monitoring_stack=getattr(args, 'monitoring_stack', None) or [],
+            logging_stack=getattr(args, 'logging_stack', None) or [],
+            security_standards=getattr(args, 'security_standards', None) or [],
+            encryption=getattr(args, 'encryption', None),
+            framework_version=getattr(args, 'framework_version', None),
+            testing_framework=getattr(args, 'testing_framework', None),
+            ci_cd_platform=getattr(args, 'ci_cd_platform', None),
+            ha_setup=getattr(args, 'ha_setup', False),
+            backup_strategy=getattr(args, 'backup_strategy', None),
+            disaster_recovery=getattr(args, 'disaster_recovery', False)
+        )
+        
         config = PromptConfig(
             technologies=args.tech,
             task_type=task_type,
             task_description=args.description or "Implement the requested functionality following best practices",
             code_requirements=args.requirements or "Follow best practices and write clean, maintainable code",
-            template_name=template_name
+            template_name=template_name,
+            specific_options=specific_options
         )
     else:
         # No configuration provided, show help
@@ -637,8 +820,67 @@ def main():
         print("  --tech python --task 'API development'  # Direct configuration")
         return
     
-    # Generate prompt
-    try:
+    # Check for unknown technologies and auto-research if enabled
+    if getattr(args, 'auto_research', False):
+        try:
+            from src.web_research.web_researcher import ResearchOrchestrator
+            from src.web_research.config import WebResearchConfig
+            
+            # Initialize research orchestrator
+            research_config = WebResearchConfig()
+            orchestrator = ResearchOrchestrator(research_config)
+            await orchestrator._initialize_components()
+            
+            # Prepare user context with specific options
+            user_context = {
+                'task_type': config.task_type,
+                'task_description': config.task_description,
+                'code_requirements': config.code_requirements,
+                'specific_options': config.specific_options
+            }
+            
+            if not args.quiet:
+                print("🔍 Checking for unknown technologies...")
+            
+            # Process unknown technologies
+            research_results = await orchestrator.process_unknown_technologies(
+                config.technologies,
+                user_context
+            )
+            
+            if research_results:
+                if not args.quiet:
+                    print(f"✅ Generated dynamic templates for {len(research_results)} technologies")
+                
+                # Use the generated template for the first technology
+                primary_tech = config.technologies[0]
+                if primary_tech in research_results:
+                    prompt = research_results[primary_tech]
+                    formatted_output = cli.format_output(prompt, args.format, config)
+                else:
+                    # Fallback to standard generation
+                    prompt = cli.generator.generate_prompt(config)
+                    formatted_output = cli.format_output(prompt, args.format, config)
+            else:
+                # No unknown technologies, use standard generation
+                prompt = cli.generator.generate_prompt(config)
+                formatted_output = cli.format_output(prompt, args.format, config)
+            
+            await orchestrator.close()
+            
+        except ImportError:
+            if not args.quiet:
+                print("⚠️  Web research module not available, using standard generation")
+            prompt = cli.generator.generate_prompt(config)
+            formatted_output = cli.format_output(prompt, args.format, config)
+        except Exception as e:
+            if not args.quiet:
+                print(f"⚠️  Web research failed: {e}")
+                print("Falling back to standard generation...")
+            prompt = cli.generator.generate_prompt(config)
+            formatted_output = cli.format_output(prompt, args.format, config)
+    else:
+        # Standard prompt generation
         if not args.quiet:
             logger.info(f"Generating prompt for technologies: {config.technologies}")
         
@@ -683,4 +925,5 @@ if __name__ == "__main__":
         print("\nRunning legacy examples for demonstration...")
         run_legacy_examples()
     else:
-        main()
+        import asyncio
+        asyncio.run(main())
