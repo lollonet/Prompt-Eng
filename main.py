@@ -1,5 +1,10 @@
 from src.prompt_generator import PromptGenerator
 import os
+import logging
+
+# Configure basic logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 # Define paths relative to the project root
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -7,6 +12,7 @@ PROMPTS_DIR = os.path.join(PROJECT_ROOT, "prompts")
 CONFIG_PATH = os.path.join(PROJECT_ROOT, "config", "tech_stack_mapping.json")
 
 def main():
+    logger.info("Starting prompt generation process.")
     generator = PromptGenerator(PROMPTS_DIR, CONFIG_PATH)
 
     # Example usage with specific Python template
@@ -15,6 +21,7 @@ def main():
     task_description_python = "un endpoint API per la registrazione utenti con validazione input e hashing password"
     code_requirements_python = "Il codice deve essere modulare, testabile e seguire i principi SOLID. Utilizzare un ORM per l'interazione con il database."
 
+    logger.info(f"Generating prompt for technologies: {technologies_python}")
     generated_prompt_python = generator.generate_prompt(
         technologies=technologies_python,
         task_type=task_type_python,
@@ -33,6 +40,7 @@ def main():
     task_description_react = "un componente React per un form di login con validazione client-side"
     code_requirements_react = "Il componente deve essere riutilizzabile, accessibile e utilizzare React Hooks. Gestire lo stato del form in modo efficiente."
 
+    logger.info(f"Generating prompt for technologies: {technologies_react}")
     generated_prompt_react = generator.generate_prompt(
         technologies=technologies_react,
         task_type=task_type_react,
@@ -51,6 +59,7 @@ def main():
     task_description_devops = "un ambiente di sviluppo locale con Docker Compose e uno script Ansible per il deployment su un server remoto"
     code_requirements_devops = "L'ambiente deve essere riproducibile, facile da configurare e il deployment deve essere automatizzato e idempotente."
 
+    logger.info(f"Generating prompt for technologies: {technologies_devops}")
     generated_prompt_devops = generator.generate_prompt(
         technologies=technologies_devops,
         task_type=task_type_devops,
@@ -62,6 +71,8 @@ def main():
     print("\n--- Generated Prompt (DevOps) ---")
     print(generated_prompt_devops)
     print("---------------------------------")
+
+    logger.info("Prompt generation process completed.")
 
 if __name__ == "__main__":
     main()

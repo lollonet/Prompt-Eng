@@ -1,0 +1,15 @@
+{
+    "name": "ESLint",
+    "description": "ESLint is a static analysis tool for identifying problematic patterns found in JavaScript code. It is highly configurable and allows developers to define their own linting rules.",
+    "benefits": [
+        "Enforces coding standards and best practices",
+        "Catches potential bugs and errors early",
+        "Improves code consistency and quality",
+        "Highly customizable with plugins and custom rules"
+    ],
+    "usage_notes": [
+        "Requires a configuration file (e.g., `.eslintrc.js`, `.eslintrc.json`).",
+        "Can be integrated into IDEs, build processes, and CI/CD pipelines."
+    ],
+    "example_command": "eslint ."
+}
