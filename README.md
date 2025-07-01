@@ -10,6 +10,7 @@ A comprehensive command-line tool for generating context-aware prompts for AI-as
 
 ### 🧠 **AI-Powered Template Generation**
 - **Smart Template Engines**: MySQL/MariaDB clusters, PostgreSQL HA, Docker Compose, Ansible automation
+- **Recursive Prompt Generation**: Complex task decomposition into manageable subtasks with dependency management
 - **Database Clustering**: Galera clusters, MySQL NDB, master-slave replication with ProxySQL load balancing
 - **Web Research Integration**: Automatic technology discovery and best practices
 - **Dynamic Generation**: Real-time adaptation based on latest documentation
@@ -46,6 +47,9 @@ python main.py --tech python fastapi --task "REST API development"
 # AI-powered template generation
 python main_modern.py --technology "prometheus grafana" --description "monitoring system"
 
+# Recursive prompt generation for complex systems
+python examples/recursive_generation_demo.py
+
 # Generate with production evaluation
 python main_modern.py --technology "postgres patroni" --description "HA database" --evaluate
 
@@ -64,13 +68,15 @@ python test_evaluation_frameworks.py
 ├── 🧠 src/
 │   ├── prompt_generator.py        # Traditional prompt generation
 │   ├── prompt_generator_modern.py # AI-enhanced generation
+│   ├── recursive_prompt_generator.py # Complex task decomposition
 │   ├── 🌐 web_research/           # Web research & AI engines
 │   │   ├── web_researcher.py      # Technology research
 │   │   ├── technology_detector.py # Auto tech detection
 │   │   └── template_engines/      # AI template generators
 │   │       ├── docker_engine.py   # Docker Compose AI
 │   │       ├── ansible_engine.py  # Ansible playbook AI
-│   │       └── patroni_engine.py  # PostgreSQL cluster AI
+│   │       ├── kubernetes_engine.py # Kubernetes manifests AI
+│   │       └── infrastructure_engine.py # Cloud infrastructure AI
 │   └── 🛡️ evaluation/             # Enterprise evaluation
 │       ├── production_readiness.py # 5-dimensional analysis
 │       ├── humaneval_devops.py    # DevOps benchmarking
@@ -106,6 +112,41 @@ python main.py --tech ansible \
   --distro rhel9 --cluster-size 5 \
   --auto-research
 ```
+
+### 🔄 **Recursive Prompt Generation**
+```python
+from src.recursive_prompt_generator import RecursivePromptGenerator, ComplexTask, TaskComplexity
+from src.types_advanced import create_technology_name
+
+# Define complex e-commerce platform
+task = ComplexTask(
+    name="E-commerce Microservices Platform",
+    description="Build complete e-commerce platform with user management, product catalog, order processing",
+    technologies=[
+        create_technology_name("react"),
+        create_technology_name("nodejs"),
+        create_technology_name("postgresql"),
+        create_technology_name("docker"),
+        create_technology_name("kubernetes")
+    ],
+    requirements=["user authentication", "product catalog", "order management", "payment processing"],
+    constraints={"timeline": "6_months", "team_size": "8_developers"},
+    target_complexity=TaskComplexity.ENTERPRISE
+)
+
+# Generate hierarchical decomposition
+result = await recursive_generator.generate_recursive_prompt(task)
+if result.is_success():
+    composite_prompt = result.unwrap()
+    print(f"Generated {len(composite_prompt.subtask_prompts)} subtasks")
+    print(f"Confidence: {composite_prompt.confidence_score:.2f}")
+```
+
+**Output includes:**
+- **Subtask Breakdown**: User Service, Product Service, Order Service, Infrastructure
+- **Integration Guide**: API contracts, data flow, service communication
+- **Deployment Instructions**: Step-by-step deployment with dependencies
+- **Architecture Overview**: Complete system architecture documentation
 
 ### 🔍 **Quality Assurance**
 ```python
@@ -163,6 +204,7 @@ print(f"Benchmark Pass Rate: {results['summary']['pass_rate']:.1%}")
 |---------|-------------|---------|
 | **Traditional Prompts** | <0.1s generation | 85% size reduction, 95%+ success rate |
 | **AI Template Generation** | 5-15s complex infra | 0.85+ confidence, 80% cache hit rate |
+| **Recursive Decomposition** | 10-30s enterprise tasks | 3-10 subtasks, dependency-aware ordering |
 | **Security Analysis** | <1s per template | 95% vulnerability detection accuracy |
 | **Compliance Validation** | <0.5s per standard | SOX, PCI-DSS, HIPAA, GDPR, ISO27001 |
 | **DevOps Benchmark** | 3-10min complete | Standardized infrastructure testing |
@@ -174,11 +216,20 @@ print(f"Benchmark Pass Rate: {results['summary']['pass_rate']:.1%}")
 # Test evaluation frameworks
 python test_evaluation_frameworks.py
 
+# Test recursive generation system
+python -m pytest tests/unit/test_recursive_prompt_generator.py -v
+
+# Test template engines
+python -m pytest tests/unit/test_template_engines.py -v
+
 # Test individual components
 python -m pytest tests/ -v
 
 # Enterprise scenario testing
 python test_enterprise_demo.py
+
+# Run recursive generation demo
+python examples/recursive_generation_demo.py
 ```
 
 ### Example Test Results

@@ -320,6 +320,52 @@ python main.py --list-tech | grep mysql
 python main.py --tech mysql --task "test" --auto-research
 ```
 
+## 🔄 Recursive Prompt Generation
+
+### Complex System Decomposition
+```bash
+# Run the recursive generation demo
+python examples/recursive_generation_demo.py
+
+# Test recursive generation
+python -m pytest tests/unit/test_recursive_prompt_generator.py -v
+```
+
+### Quick Recursive Generation
+```python
+from src.recursive_prompt_generator import RecursivePromptGenerator, ComplexTask, TaskComplexity
+from src.types_advanced import create_technology_name
+
+# E-commerce microservices platform
+task = ComplexTask(
+    name="E-commerce Platform",
+    description="Build complete e-commerce platform with microservices",
+    technologies=[
+        create_technology_name("react"),
+        create_technology_name("nodejs"),
+        create_technology_name("postgresql"),
+        create_technology_name("docker"),
+        create_technology_name("kubernetes")
+    ],
+    requirements=["user auth", "product catalog", "order processing"],
+    target_complexity=TaskComplexity.ENTERPRISE
+)
+
+result = await recursive_generator.generate_recursive_prompt(task)
+```
+
+### Task Complexity Levels
+- **SIMPLE**: Single-component applications
+- **MODERATE**: Multi-tier applications (3-5 components)
+- **COMPLEX**: Microservices (5-10 services)
+- **ENTERPRISE**: Large-scale platforms (10+ services)
+
+### Decomposition Strategies
+- **BY_SERVICES**: Microservices architecture breakdown
+- **BY_TIERS**: Frontend, backend, database layers
+- **BY_FEATURES**: Feature-based decomposition
+- **BY_DOMAINS**: Domain-driven design patterns
+
 ## 📚 Advanced Features
 
 ### Interactive Mode
