@@ -9,7 +9,8 @@ A comprehensive command-line tool for generating context-aware prompts for AI-as
 ## ✨ Key Features
 
 ### 🧠 **AI-Powered Template Generation**
-- **Smart Template Engines**: Docker Compose, Ansible, Patroni cluster generation
+- **Smart Template Engines**: MySQL/MariaDB clusters, PostgreSQL HA, Docker Compose, Ansible automation
+- **Database Clustering**: Galera clusters, MySQL NDB, master-slave replication with ProxySQL load balancing
 - **Web Research Integration**: Automatic technology discovery and best practices
 - **Dynamic Generation**: Real-time adaptation based on latest documentation
 - **Intelligent Caching**: Performance optimization with 80%+ cache hit rates
@@ -22,7 +23,7 @@ A comprehensive command-line tool for generating context-aware prompts for AI-as
 
 ### 🎯 **Advanced Prompt Engineering**
 - **Research-Based Optimization**: 85% prompt length reduction with cognitive science principles
-- **Multi-Technology Support**: 40+ technology combinations
+- **Multi-Technology Support**: 40+ technology combinations including MySQL, MariaDB, PostgreSQL, Docker, Kubernetes
 - **Task-First Architecture**: Optimized for AI model attention mechanisms
 - **Interactive CLI**: Guided prompt creation with shell autocomplete
 
@@ -83,14 +84,27 @@ python test_evaluation_frameworks.py
 
 ### 🐳 **Infrastructure Generation**
 ```bash
-# Generate Docker Compose with monitoring
-python main_modern.py --technology "nginx postgres prometheus grafana" \
-  --description "web application with monitoring"
+# Generate MySQL Galera cluster with monitoring
+python main.py --tech mariadb galera proxysql \
+  --task "high availability database cluster" \
+  --cluster-size 3 --ha-setup --monitoring-stack prometheus grafana \
+  --auto-research
 
-# Create Ansible playbook for RHEL9
-python main_modern.py --engine ansible \
-  --technology "postgresql prometheus rhel9" \
-  --description "database and monitoring setup"
+# Create PostgreSQL HA cluster
+python main.py --tech patroni postgresql \
+  --cluster-size 3 --distro rhel9 \
+  --auto-research
+
+# Generate Docker Compose with monitoring
+python main.py --tech docker nginx postgres prometheus \
+  --task "web application with monitoring" \
+  --auto-research
+
+# Create Ansible playbook for server setup
+python main.py --tech ansible \
+  --task "database and monitoring setup" \
+  --distro rhel9 --cluster-size 5 \
+  --auto-research
 ```
 
 ### 🔍 **Quality Assurance**

@@ -15,7 +15,8 @@ A comprehensive command-line tool for generating context-aware prompts for AI-as
 - **Task-first architecture** optimizing AI model attention mechanisms
 
 ### Advanced Template Generation
-- **AI-powered template engines** for Docker, Ansible, and Patroni
+- **AI-powered template engines** for MySQL/MariaDB clusters, PostgreSQL HA, Docker, Ansible, and Patroni
+- **Database clustering support** with Galera clusters, MySQL NDB, master-slave replication, and ProxySQL load balancing
 - **Web research integration** with automatic technology discovery
 - **Dynamic template generation** based on real-time research
 - **Intelligent caching system** for improved performance
@@ -98,6 +99,12 @@ A comprehensive command-line tool for generating context-aware prompts for AI-as
 ### Basic Commands (Traditional CLI)
 
 ```bash
+# Generate MySQL Galera cluster template
+python main.py --tech mariadb galera --task "database cluster" --cluster-size 3 --ha-setup --auto-research
+
+# Generate PostgreSQL HA cluster
+python main.py --tech patroni postgresql --cluster-size 3 --auto-research
+
 # Generate prompt with technologies and task
 python main.py --tech python fastapi --task "REST API development"
 
@@ -117,6 +124,9 @@ python main.py --list-examples
 ### Modern AI-Powered CLI
 
 ```bash
+# Generate MySQL cluster with enterprise features
+python main.py --tech mariadb galera proxysql --task "enterprise database cluster" --cluster-size 5 --ha-setup --monitoring-stack prometheus grafana --security-standards pci-dss --auto-research
+
 # Generate infrastructure templates with AI research
 python main_modern.py --technology "prometheus grafana" --description "monitoring system"
 

@@ -1,6 +1,6 @@
-# MySQL/MariaDB Template System - Quick Reference Guide
+# Prompt Engineering CLI - Complete Cheat Sheet
 
-> **Complete cheat sheet for using the MySQL/MariaDB clustering templates in the Prompt Engineering CLI**
+> **Comprehensive quick reference guide for all features and templates**
 
 ## 🚀 Quick Start
 
@@ -18,7 +18,9 @@ python main.py --help
 python main.py --tech [TECHNOLOGY] --task "[DESCRIPTION]" [OPTIONS] --auto-research
 ```
 
-## 📋 Available MySQL Technologies
+## 📋 Available Technologies
+
+### Database Technologies
 
 | Technology | Description | Use Case |
 |------------|-------------|----------|
@@ -27,10 +29,30 @@ python main.py --tech [TECHNOLOGY] --task "[DESCRIPTION]" [OPTIONS] --auto-resea
 | `galera` | Galera Cluster | Multi-master synchronous replication |
 | `mysql-cluster` | MySQL NDB Cluster | Distributed computing and high availability |
 | `proxysql` | ProxySQL Load Balancer | Connection pooling and load balancing |
+| `postgresql` | PostgreSQL Database | Advanced relational database |
+| `patroni` | Patroni PostgreSQL HA | PostgreSQL high availability clustering |
+
+### Infrastructure Technologies
+| Technology | Description | Use Case |
+|------------|-------------|----------|
+| `docker` | Docker Containerization | Container deployment |
+| `docker-compose` | Docker Compose | Multi-container applications |
+| `ansible` | Ansible Automation | Configuration management |
+| `kubernetes` | Kubernetes Orchestration | Container orchestration |
+
+### Development Technologies
+| Technology | Description | Use Case |
+|------------|-------------|----------|
+| `python` | Python Programming | Backend development |
+| `fastapi` | FastAPI Framework | REST API development |
+| `react` | React Frontend | Web application frontend |
+| `nodejs` | Node.js Runtime | JavaScript backend |
 
 ## 🏗️ Deployment Patterns
 
-### 1. Galera Cluster (Recommended for HA)
+### Database Clusters
+
+#### 1. Galera Cluster (Recommended for HA)
 ```bash
 # 3-node MariaDB Galera cluster with ProxySQL
 python main.py \
@@ -96,6 +118,71 @@ python main.py \
 - Single MySQL container
 - Development-friendly configuration
 - Basic monitoring setup
+
+### Application Development
+
+#### 1. FastAPI REST API
+```bash
+# Python FastAPI application
+python main.py \
+  --tech python fastapi \
+  --task "REST API development" \
+  --testing-framework pytest \
+  --auto-research
+```
+
+#### 2. React Frontend Application
+```bash
+# React frontend with TypeScript
+python main.py \
+  --tech react typescript \
+  --task "frontend web application" \
+  --testing-framework jest \
+  --auto-research
+```
+
+#### 3. Full-Stack Application
+```bash
+# Complete MERN stack
+python main.py \
+  --tech react nodejs mongodb \
+  --task "full-stack web application" \
+  --auto-research
+```
+
+### Infrastructure Deployment
+
+#### 1. Docker Compose Setup
+```bash
+# Multi-container application
+python main.py \
+  --tech docker docker-compose \
+  --task "containerized application" \
+  --orchestrator docker-compose \
+  --auto-research
+```
+
+#### 2. Kubernetes Deployment
+```bash
+# Kubernetes application deployment
+python main.py \
+  --tech kubernetes \
+  --task "cloud-native application" \
+  --orchestrator k8s \
+  --ingress-controller nginx \
+  --auto-research
+```
+
+#### 3. Ansible Configuration
+```bash
+# Infrastructure automation
+python main.py \
+  --tech ansible \
+  --task "server configuration" \
+  --distro rhel9 \
+  --cluster-size 5 \
+  --auto-research
+```
 
 ## 🔧 Essential CLI Options
 
