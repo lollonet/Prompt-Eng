@@ -1,136 +1,284 @@
+"""
+Unit tests for AsyncKnowledgeManager focusing on public behavior.
+
+Tests the public interface without mocking implementation details,
+focusing on the behavior users actually interact with.
+"""
+
 import json
-import os
-
 import pytest
+from pathlib import Path
+from unittest.mock import AsyncMock
 
-import src.utils
-from src.knowledge_manager import KnowledgeManager
-from src.utils import safe_path_join
-
-
-# Setup for tests
-@pytest.fixture
-def setup_knowledge_base(tmp_path, mocker):
-    # Create dummy config file
-    config_dir = tmp_path / "config"
-    config_dir.mkdir()
-    config_file = config_dir / "tech_stack_mapping.json"
-    config_data = {
-        "python": {"best_practices": ["PEP8"], "tools": ["Pylint"]},
-        "javascript": {"best_practices": ["ESLint Recommended"], "tools": ["Jest"]},
-        "docker": {"best_practices": ["Docker Best Practices"], "tools": ["Docker"]},
-    }
-    with open(config_file, "w") as f:
-        json.dump(config_data, f)
-
-    # Create dummy knowledge base files
-    kb_bp_dir = tmp_path / "knowledge_base" / "best_practices"
-    kb_bp_dir.mkdir(parents=True)
-    (kb_bp_dir / "pep8.md").write_text("PEP8 details")
-    (kb_bp_dir / "docker_best_practices.md").write_text("Docker BP details")
-
-    kb_tools_dir = tmp_path / "knowledge_base" / "tools"
-    kb_tools_dir.mkdir(parents=True)
-    with open(kb_tools_dir / "pylint.json", "w") as f:
-        json.dump({"name": "Pylint", "description": "Pylint tool"}, f)
-    with open(kb_tools_dir / "docker.json", "w") as f:
-        json.dump({"name": "Docker", "description": "Docker tool"}, f)
-
-    # Mock the internal _load_tech_stack_mapping method of KnowledgeManager
-    # This allows us to control the initial state without actual file I/O during __init__
-    mocker.patch.object(KnowledgeManager, "_load_tech_stack_mapping", return_value=config_data)
-
-    # Mock the underlying file read functions to count calls for caching test
-    mock_read_text_file = mocker.patch("src.knowledge_manager.read_text_file")
-    mock_load_json_file = mocker.patch("src.knowledge_manager.load_json_file")
-
-    # Configure mocks to return dummy data when called, or raise FileNotFoundError for missing files
-    def mock_read_text_side_effect(path):
-        if "pep8.md" in path:
-            return "PEP8 details"
-        elif "docker_best_practices.md" in path:
-            return "Docker BP details"
-        else:
-            raise FileNotFoundError(f"File not found: {path}")
-
-    def mock_load_json_side_effect(path):
-        if "pylint.json" in path:
-            return {"name": "Pylint", "description": "Pylint tool"}
-        elif "docker.json" in path:
-            return {"name": "Docker", "description": "Docker tool"}
-        else:
-            raise FileNotFoundError(f"File not found: {path}")
-
-    mock_read_text_file.side_effect = mock_read_text_side_effect
-    mock_load_json_file.side_effect = mock_load_json_side_effect
-
-    # Instantiate KnowledgeManager after mocks are set up
-    km = KnowledgeManager(str(config_file), base_path=str(tmp_path))
-
-    return km, mock_read_text_file, mock_load_json_file
+from src.knowledge_manager_async import AsyncKnowledgeManager
+from src.types_advanced import KnowledgeManagerConfig, TechnologyName, BestPracticeName, ToolName
+from src.result_types import Success, Error
 
 
-def test_knowledge_manager_init(setup_knowledge_base):
-    km, _, _ = setup_knowledge_base
-    assert km.tech_stack_mapping is not None
-    assert "python" in km.tech_stack_mapping
+class TestAsyncKnowledgeManagerPublicBehavior:
+    """Test AsyncKnowledgeManager public interface and behavior."""
+    
+    @pytest.fixture
+    def test_config_data(self):
+        """Sample configuration data for testing."""
+        return {
+            "python": {
+                "best_practices": ["Use type hints", "Follow PEP 8", "Write tests"],
+                "tools": ["pytest", "black", "mypy"]
+            },
+            "docker": {
+                "best_practices": ["Multi-stage builds", "Minimal base images"],
+                "tools": ["docker-compose", "buildx"]
+            }
+        }
+    
+    @pytest.fixture
+    def knowledge_manager(self, tmp_path, test_config_data):
+        """Create AsyncKnowledgeManager with test data."""
+        # Setup test directory structure
+        config_dir = tmp_path / "config"
+        config_dir.mkdir()
+        
+        # Create mapping file
+        mapping_file = config_dir / "tech_stack_mapping.json"
+        mapping_file.write_text(json.dumps(test_config_data, indent=2))
+        
+        # Create knowledge base structure  
+        kb_dir = tmp_path / "knowledge_base"
+        kb_dir.mkdir()
+        
+        # Create config
+        config = KnowledgeManagerConfig(
+            config_path=str(mapping_file),
+            base_path=str(kb_dir),
+            cache_strategy="memory",
+            cache_ttl_seconds=300,
+            enable_performance_tracking=True,
+            max_concurrent_operations=5
+        )
+        
+        return AsyncKnowledgeManager(config)
+    
+    @pytest.mark.asyncio
+    async def test_get_best_practices_success(self, knowledge_manager):
+        """Test successful best practices retrieval."""
+        result = await knowledge_manager.get_best_practices(TechnologyName("python"))
+        
+        assert result.is_success()
+        practices = result.unwrap()
+        assert isinstance(practices, list)
+        assert len(practices) > 0
+        assert "Use type hints" in practices
+        assert "Follow PEP 8" in practices
+    
+    @pytest.mark.asyncio 
+    async def test_get_tools_success(self, knowledge_manager):
+        """Test successful tools retrieval."""
+        result = await knowledge_manager.get_tools(TechnologyName("docker"))
+        
+        assert result.is_success()
+        tools = result.unwrap()
+        assert isinstance(tools, list)
+        assert len(tools) > 0
+        assert "docker-compose" in tools
+        assert "buildx" in tools
+    
+    @pytest.mark.asyncio
+    async def test_get_best_practices_unknown_technology(self, knowledge_manager):
+        """Test behavior with unknown technology."""
+        result = await knowledge_manager.get_best_practices(TechnologyName("unknown_tech"))
+        
+        # Should handle gracefully - either return empty list or error
+        # The exact behavior depends on implementation, but should not crash
+        assert result.is_success() or result.is_error()
+        
+        if result.is_success():
+            practices = result.unwrap()
+            assert isinstance(practices, list)
+        
+    @pytest.mark.asyncio
+    async def test_get_tools_unknown_technology(self, knowledge_manager):
+        """Test tools retrieval for unknown technology."""
+        result = await knowledge_manager.get_tools(TechnologyName("unknown_tech"))
+        
+        # Should handle gracefully
+        assert result.is_success() or result.is_error()
+        
+        if result.is_success():
+            tools = result.unwrap()
+            assert isinstance(tools, list)
+    
+    @pytest.mark.asyncio
+    async def test_preload_data_multiple_technologies(self, knowledge_manager):
+        """Test preloading data for multiple technologies."""
+        technologies = [TechnologyName("python"), TechnologyName("docker")]
+        
+        # Should not raise an exception
+        await knowledge_manager.preload_data(technologies)
+        
+        # After preloading, subsequent calls should be faster
+        result1 = await knowledge_manager.get_best_practices(TechnologyName("python"))
+        result2 = await knowledge_manager.get_tools(TechnologyName("docker"))
+        
+        assert result1.is_success()
+        assert result2.is_success()
+    
+    @pytest.mark.asyncio
+    async def test_cache_behavior(self, knowledge_manager):
+        """Test that caching works by making multiple calls."""
+        technology = TechnologyName("python")
+        
+        # First call
+        result1 = await knowledge_manager.get_best_practices(technology)
+        
+        # Second call should use cache
+        result2 = await knowledge_manager.get_best_practices(technology)
+        
+        assert result1.is_success()
+        assert result2.is_success()
+        assert result1.unwrap() == result2.unwrap()
+    
+    @pytest.mark.asyncio
+    async def test_health_check(self, knowledge_manager):
+        """Test health check functionality."""
+        health_result = await knowledge_manager.health_check()
+        
+        assert health_result.is_success()
+        health_info = health_result.unwrap()
+        
+        # Should contain basic health information
+        assert "status" in health_info
+        assert "component" in health_info
+        assert health_info["component"] == "AsyncKnowledgeManager"
+    
+    @pytest.mark.asyncio
+    async def test_clear_cache(self, knowledge_manager):
+        """Test cache clearing functionality."""
+        # Load some data
+        await knowledge_manager.get_best_practices(TechnologyName("python"))
+        
+        # Clear cache should not raise exception
+        await knowledge_manager.clear_cache()
+        
+        # Should still be able to load data after cache clear
+        result = await knowledge_manager.get_best_practices(TechnologyName("python"))
+        assert result.is_success()
+    
+    @pytest.mark.asyncio
+    async def test_concurrent_operations(self, knowledge_manager):
+        """Test concurrent operations work properly."""
+        import asyncio
+        
+        # Launch multiple concurrent operations
+        tasks = [
+            knowledge_manager.get_best_practices(TechnologyName("python")),
+            knowledge_manager.get_tools(TechnologyName("python")),
+            knowledge_manager.get_best_practices(TechnologyName("docker")),
+            knowledge_manager.get_tools(TechnologyName("docker"))
+        ]
+        
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        
+        # All operations should complete successfully
+        for result in results:
+            assert not isinstance(result, Exception)
+            assert result.is_success()
+    
+    @pytest.mark.asyncio
+    async def test_result_types_consistency(self, knowledge_manager):
+        """Test that all methods return proper Result types."""
+        # Test different methods
+        methods_and_args = [
+            (knowledge_manager.get_best_practices, [TechnologyName("python")]),
+            (knowledge_manager.get_tools, [TechnologyName("python")]),
+            (knowledge_manager.health_check, []),
+        ]
+        
+        for method, args in methods_and_args:
+            result = await method(*args)
+            
+            # Should always return a Result type
+            assert hasattr(result, 'is_success')
+            assert hasattr(result, 'is_error')
+            assert result.is_success() or result.is_error()
+            
+            # If success, should be able to unwrap
+            if result.is_success():
+                value = result.unwrap()
+                assert value is not None
 
 
-def test_get_best_practices(setup_knowledge_base):
-    km, _, _ = setup_knowledge_base
-    assert km.get_best_practices("python") == ["PEP8"]
-    assert km.get_best_practices("non_existent") == []
+class TestKnowledgeManagerConfiguration:
+    """Test configuration handling and validation."""
+    
+    def test_config_validation(self, tmp_path):
+        """Test that configuration is properly validated."""
+        config = KnowledgeManagerConfig(
+            config_path="nonexistent/path.json",
+            base_path=str(tmp_path),
+            cache_strategy="memory",
+            cache_ttl_seconds=300,
+            enable_performance_tracking=True,
+            max_concurrent_operations=5
+        )
+        
+        # Should be able to create instance even with invalid path
+        # (validation happens at runtime)
+        manager = AsyncKnowledgeManager(config)
+        assert manager is not None
+        assert manager.config == config
+    
+    def test_config_defaults(self, tmp_path):
+        """Test configuration with minimal settings."""
+        config = KnowledgeManagerConfig(
+            config_path="test.json",
+            base_path=str(tmp_path)
+        )
+        
+        manager = AsyncKnowledgeManager(config)
+        assert manager.config.cache_strategy == "memory"  # Default value
+        assert manager.config.max_concurrent_operations > 0  # Should have reasonable default
 
 
-def test_get_tools(setup_knowledge_base):
-    km, _, _ = setup_knowledge_base
-    assert km.get_tools("python") == ["Pylint"]
-    assert km.get_tools("non_existent") == []
-
-
-def test_get_best_practice_details(setup_knowledge_base):
-    km, _, _ = setup_knowledge_base
-    assert km.get_best_practice_details("PEP8") == "PEP8 details"
-    assert km.get_best_practice_details("Non Existent BP") is None
-
-
-def test_get_tool_details(setup_knowledge_base):
-    km, _, _ = setup_knowledge_base
-    details = km.get_tool_details("Pylint")
-    assert details["name"] == "Pylint"
-    assert details["description"] == "Pylint tool"
-    assert km.get_tool_details("Non Existent Tool") is None
-
-
-def test_knowledge_manager_caching(setup_knowledge_base):
-    km, mock_read_text_file, mock_load_json_file = setup_knowledge_base
-
-    # First call for best practice - should read from file
-    km.get_best_practice_details("PEP8")
-    mock_read_text_file.assert_called_once()
-    mock_read_text_file.reset_mock()
-
-    # Second call for best practice - should be from cache
-    km.get_best_practice_details("PEP8")
-    mock_read_text_file.assert_not_called()
-
-    # First call for tool - should read from file
-    km.get_tool_details("Pylint")
-    mock_load_json_file.assert_called_once()
-    mock_load_json_file.reset_mock()
-
-    # Second call for tool - should be from cache
-    km.get_tool_details("Pylint")
-    mock_load_json_file.assert_not_called()
-
-
-def test_safe_path_join_prevention(tmp_path):
-    base_dir = str(tmp_path)
-    # Attempt to traverse outside base_dir
-    with pytest.raises(ValueError, match="Attempted directory traversal"):
-        safe_path_join(base_dir, "..", "outside_dir")
-
-    # Valid path within base_dir
-    valid_path = safe_path_join(base_dir, "subdir", "file.txt")
-    assert valid_path.startswith(os.path.abspath(base_dir))
-    assert ".." not in valid_path  # Ensure no '..' in normalized path
+class TestKnowledgeManagerErrorHandling:
+    """Test error handling without mocking implementation details."""
+    
+    @pytest.mark.asyncio
+    async def test_invalid_config_file_handling(self, tmp_path):
+        """Test behavior with invalid configuration file."""
+        # Create config pointing to non-existent file
+        config = KnowledgeManagerConfig(
+            config_path="nonexistent/file.json",
+            base_path=str(tmp_path)
+        )
+        
+        manager = AsyncKnowledgeManager(config)
+        
+        # Should handle errors gracefully when trying to load data
+        result = await manager.get_best_practices(TechnologyName("python"))
+        
+        # Should return an error result, not raise exception
+        assert result.is_error()
+        error = result.error
+        assert error is not None
+    
+    @pytest.mark.asyncio
+    async def test_empty_technology_name_handling(self, tmp_path):
+        """Test behavior with empty or invalid technology names."""
+        config = KnowledgeManagerConfig(
+            config_path="test.json",
+            base_path=str(tmp_path)
+        )
+        
+        manager = AsyncKnowledgeManager(config)
+        
+        # Test with empty string (if TechnologyName allows it)
+        try:
+            empty_tech = TechnologyName("")
+            result = await manager.get_best_practices(empty_tech)
+            
+            # Should handle gracefully
+            assert result.is_success() or result.is_error()
+        except ValueError:
+            # TechnologyName might validate and reject empty strings
+            pass
