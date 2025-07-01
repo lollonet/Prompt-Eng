@@ -515,7 +515,7 @@ class ResultComposer:
         
         for i, subtask in enumerate(subtasks, 1):
             instructions += f"{i}. **{subtask.name}**\n"
-            instructions += f"   - Technologies: {', '.join([t.value for t in subtask.technologies])}\n"
+            instructions += f"   - Technologies: {', '.join([str(t) for t in subtask.technologies])}\n"
             instructions += f"   - Complexity: {subtask.complexity.value}\n\n"
         
         instructions += "## Prerequisites\n\n"
@@ -533,13 +533,13 @@ class ResultComposer:
         for subtask in subtasks:
             overview += f"### {subtask.name}\n"
             overview += f"- **Description**: {subtask.description}\n"
-            overview += f"- **Technologies**: {', '.join([t.value for t in subtask.technologies])}\n"
+            overview += f"- **Technologies**: {', '.join([str(t) for t in subtask.technologies])}\n"
             overview += f"- **Integration Points**: {', '.join(subtask.integration_points)}\n\n"
         
         overview += "## Technology Stack\n\n"
         all_technologies = set()
         for subtask in subtasks:
-            all_technologies.update([t.value for t in subtask.technologies])
+            all_technologies.update([str(t) for t in subtask.technologies])
         
         for tech in sorted(all_technologies):
             overview += f"- {tech}\n"
@@ -623,7 +623,7 @@ class RecursivePromptGenerator:
                 source="recursive_prompt_generator",
                 payload={
                     "task_name": complex_task.name,
-                    "technologies": [t.value for t in complex_task.technologies],
+                    "technologies": [str(t) for t in complex_task.technologies],
                     "correlation_id": str(uuid4())
                 }
             )

@@ -7,7 +7,11 @@ complex tasks and showing how they are decomposed and composed hierarchically.
 
 import asyncio
 import logging
+import sys
 from pathlib import Path
+
+# Add the parent directory to the Python path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.recursive_prompt_generator import (
     RecursivePromptGenerator,
@@ -17,7 +21,7 @@ from src.recursive_prompt_generator import (
 )
 from src.prompt_generator_modern import ModernPromptGenerator
 from src.knowledge_manager_async import create_async_knowledge_manager
-from src.web_research.template_engines.template_factory import TemplateFactory
+from src.web_research.template_engines.template_factory import TemplateEngineFactory
 from src.types_advanced import create_technology_name
 from src.common.cache_manager import AsyncCacheManager
 
@@ -34,11 +38,11 @@ async def create_recursive_generator() -> RecursivePromptGenerator:
     
     # Create base generator
     cache_manager = AsyncCacheManager()
-    knowledge_manager = await create_async_knowledge_manager(cache_manager)
-    base_generator = ModernPromptGenerator(knowledge_manager, cache_manager)
+    knowledge_manager = create_async_knowledge_manager("config/tech_stack_mapping.json")
+    base_generator = ModernPromptGenerator("prompts", knowledge_manager)
     
     # Create template factory
-    template_factory = TemplateFactory()
+    template_factory = TemplateEngineFactory()
     
     # Create recursive configuration
     config = RecursiveConfig(
@@ -170,7 +174,7 @@ async def demonstrate_recursive_generation(task: ComplexTask, generator: Recursi
     print(f"   {task.description}")
     
     print(f"\n🔧 Technologies ({len(task.technologies)}):")
-    tech_names = [tech.value for tech in task.technologies]
+    tech_names = [str(tech) for tech in task.technologies]
     for i, tech in enumerate(tech_names, 1):
         print(f"   {i:2d}. {tech}")
     
@@ -224,7 +228,7 @@ async def demonstrate_recursive_generation(task: ComplexTask, generator: Recursi
             return composite_prompt
             
         else:
-            error_msg = result.unwrap_error()
+            error_msg = result.error
             print(f"\n❌ Generation failed: {error_msg}")
             return None
             
