@@ -13,20 +13,12 @@ from uuid import UUID, uuid4
 import pytest
 
 from src.events import (
-    BatchEventHandler,
-    ConditionalEventHandler,
     Event,
     EventBus,
     EventHandler,
-    EventMiddleware,
     EventPublishConfig,
     EventType,
-    RetryEventHandler,
     SyncEventHandler,
-    _create_error_payload,
-    _create_function_payload,
-    _publish_async_events,
-    _publish_sync_events,
     event_bus,
     publish_events,
 )
@@ -37,9 +29,9 @@ class TestEvent:
 
     def test_event_creation_minimal(self):
         """Test event creation with minimal required fields."""
-        event = Event(event_type="test_event", source="test_source")
+        event = Event(event_type=EventType.PROMPT_GENERATION_STARTED, source="test_source")
 
-        assert event.event_type == "test_event"
+        assert event.event_type == EventType.PROMPT_GENERATION_STARTED
         assert event.source == "test_source"
         assert event.payload == {}
         assert isinstance(event.event_id, UUID)
@@ -75,7 +67,7 @@ class TestEvent:
         """Test event serialization to dictionary."""
         correlation_id = uuid4()
         event = Event(
-            event_type="test_event",
+            event_type=EventType.PROMPT_GENERATION_STARTED,
             source="test_source",
             payload={"data": "value"},
             correlation_id=correlation_id,
@@ -83,7 +75,7 @@ class TestEvent:
 
         event_dict = event.to_dict()
 
-        assert event_dict["event_type"] == "test_event"
+        assert event_dict["event_type"] == "prompt_generation_started"
         assert event_dict["source"] == "test_source"
         assert event_dict["payload"] == {"data": "value"}
         assert event_dict["correlation_id"] == str(correlation_id)
@@ -103,25 +95,28 @@ class TestEventBus:
         """Test event bus initialization."""
         bus = EventBus()
         assert bus._handlers == {}
-        assert bus._middleware == []
-        assert bus._metrics is not None
+        assert bus._sync_handlers == {}
+        assert bus._global_handlers == []
+        assert bus._event_history == []
+        assert bus._max_history_size == 1000
 
-    def test_sync_event_subscription_and_publishing(self):
+    @pytest.mark.asyncio
+    async def test_sync_event_subscription_and_publishing(self):
         """Test synchronous event subscription and publishing."""
 
-        def test_handler(event: Event):
+        async def test_handler(event: Event):
             self.received_events.append(event)
 
         # Subscribe handler
-        self.event_bus.subscribe("test_event", test_handler)
+        self.event_bus.subscribe(EventType.PROMPT_GENERATION_STARTED, test_handler)
 
         # Publish event
-        test_event = Event("test_event", "test_source", {"data": "test"})
-        self.event_bus.publish(test_event)
+        test_event = Event(event_type=EventType.PROMPT_GENERATION_STARTED, source="test_source", payload={"data": "test"})
+        await self.event_bus.publish(test_event)
 
         # Verify event was received
         assert len(self.received_events) == 1
-        assert self.received_events[0].event_type == "test_event"
+        assert self.received_events[0].event_type == EventType.PROMPT_GENERATION_STARTED
         assert self.received_events[0].payload["data"] == "test"
 
     @pytest.mark.asyncio

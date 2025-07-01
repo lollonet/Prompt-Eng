@@ -39,7 +39,6 @@ from src.result_types import (
     Error,
     KnowledgeError,
     PromptError,
-    Result,
     Success,
     combine_results,
     safe_call,

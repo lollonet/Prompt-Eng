@@ -14,10 +14,8 @@ from src.result_types import (
     Error,
     KnowledgeError,
     PromptError,
-    Result,
     Success,
     ValidationError,
-    _example_usage,
     combine_results,
     safe_call,
 )
