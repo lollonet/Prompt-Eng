@@ -138,8 +138,13 @@ class DockerTemplateEngine(ITemplateEngine):
         if any(tech in tech_lower for tech in ["docker", "compose", "container"]):
             return True
 
-        # Containerizable technologies with orchestrator preference
+        # Containerizable technologies - Docker can handle most monitoring and web technologies
         if any(tech in tech_lower for tech in self.supported_technologies):
+            # Always handle monitoring technologies via Docker
+            if any(tech in tech_lower for tech in ["prometheus", "grafana", "alertmanager", "victoria-metrics"]):
+                return True
+                
+            # Handle other technologies when Docker is preferred
             orchestrator = getattr(context.specific_options, "orchestrator", "")
             container_runtime = getattr(context.specific_options, "container_runtime", "")
 
@@ -175,8 +180,14 @@ class DockerTemplateEngine(ITemplateEngine):
         technologies = self._parse_technologies(context.technology)
         docker_config = self._build_docker_config(context)
 
+        # Check if monitoring stack is specified
+        monitoring_stack = getattr(context.specific_options, "monitoring_stack", [])
+        if monitoring_stack:
+            # Include monitoring tools in technologies
+            technologies.extend([tool for tool in monitoring_stack if tool not in technologies])
+
         # Generate appropriate template based on technology count
-        if len(technologies) > 1:
+        if len(technologies) > 1 or monitoring_stack:
             template_content = self._generate_compose_template(technologies, context, docker_config)
         else:
             template_content = self._generate_dockerfile_template(
