@@ -1,0 +1,92 @@
+# Enterprise Prompt Generator Configuration
+# Central configuration file for all system components
+
+[system]
+name = "Enterprise Prompt Generator"
+version = "2.0.0"
+environment = "production"
+
+[paths]
+# Base directories
+prompts_dir = "prompts"
+knowledge_base_root = "knowledge_base"
+config_dir = "config"
+cache_dir = "cache"
+logs_dir = "logs"
+
+# Configuration files
+tech_stack_mapping = "config/tech_stack_mapping.json"
+templates_config = "config/templates.json"
+
+[performance]
+# Performance and concurrency settings
+max_concurrent_operations = 10
+enable_performance_tracking = true
+performance_threshold_ms = 1000
+memory_limit_mb = 512
+
+[cache]
+# Caching configuration
+strategy = "memory"
+ttl_seconds = 3600
+max_size = 1000
+enable_compression = false
+eviction_policy = "lru"
+
+[logging]
+# Logging configuration
+level = "INFO"
+format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+file_rotation = true
+max_file_size_mb = 10
+backup_count = 5
+
+[knowledge_manager]
+# Knowledge management settings
+preload_common_technologies = true
+auto_refresh_interval_minutes = 60
+validation_strict_mode = true
+backup_strategy = "daily"
+
+[event_system]
+# Event-driven architecture settings
+enable_events = true
+max_event_history = 1000
+event_retention_hours = 24
+async_event_processing = true
+
+[web_research]
+# Web research module configuration
+enable_web_research = true
+max_concurrent_requests = 5
+request_timeout_seconds = 30
+cache_web_results = true
+user_agent = "Enterprise-Prompt-Generator/2.0"
+
+[security]
+# Security settings
+validate_inputs = true
+sanitize_outputs = true
+rate_limiting = true
+max_requests_per_minute = 100
+
+[templates]
+# Template system configuration
+default_template = "base_prompts/generic_code_prompt.txt"
+template_validation = true
+custom_template_dir = "custom_templates"
+template_caching = true
+
+[monitoring]
+# System monitoring and observability
+enable_health_checks = true
+health_check_interval_seconds = 30
+metrics_collection = true
+alert_thresholds = { error_rate = 0.05, response_time_ms = 2000 }
+
+[development]
+# Development and testing settings
+debug_mode = false
+verbose_logging = false
+test_mode = false
+mock_external_services = false

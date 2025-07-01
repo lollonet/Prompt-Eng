@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 from typing import List, Optional
 
+from src.config import configure_application, get_config
 from src.prompt_generator_modern import create_modern_prompt_generator
 from src.types_advanced import (
     PromptConfigAdvanced,
@@ -39,23 +40,36 @@ class PromptGeneratorCLI:
     
     def __init__(self):
         self.generator = None
-        self.prompts_dir = Path("prompts")
-        self.config_path = Path("config/tech_stack_mapping.json")
+        self.config = None
     
-    async def initialize(self) -> bool:
+    async def initialize(self, config_file: Optional[str] = None) -> bool:
         """
         Initialize the prompt generator with enterprise configurations.
+        
+        Args:
+            config_file: Optional path to configuration file.
         
         Returns:
             bool: True if initialization successful, False otherwise.
         """
         try:
+            # Initialize centralized configuration
+            config_path = config_file or "config/config.toml"
+            try:
+                self.config = configure_application(config_path)
+            except FileNotFoundError:
+                # Fall back to defaults if config file doesn't exist
+                logger.warning("Config file not found, using defaults: %s", config_path)
+                self.config = configure_application()
+            
+            # Create generator with centralized config
+            paths = self.config.get_absolute_paths()
             self.generator = await create_modern_prompt_generator(
-                prompts_dir=str(self.prompts_dir),
-                config_path=str(self.config_path),
-                performance_tracking=True,
-                enable_performance_tracking=True,
-                max_concurrent_operations=10,
+                prompts_dir=str(paths["prompts_dir"]),
+                config_path=str(paths["tech_stack_mapping"]),
+                performance_tracking=self.config.performance.enable_performance_tracking,
+                enable_performance_tracking=self.config.performance.enable_performance_tracking,
+                max_concurrent_operations=self.config.performance.max_concurrent_operations,
             )
             logger.info("Enterprise Prompt Generator initialized successfully")
             return True
@@ -174,6 +188,12 @@ def create_parser() -> argparse.ArgumentParser:
         description="Enterprise Prompt Generator CLI",
         epilog="Generate enterprise-grade technical prompts with comprehensive best practices.",
         formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    
+    # Global options
+    parser.add_argument(
+        "--config", "-c",
+        help="Path to configuration file (default: config/config.toml)"
     )
     
     # Main command subparsers
@@ -296,7 +316,7 @@ async def main():
     # Initialize CLI
     cli = PromptGeneratorCLI()
     
-    if not await cli.initialize():
+    if not await cli.initialize(args.config):
         logger.error("Failed to initialize system")
         return 1
     
