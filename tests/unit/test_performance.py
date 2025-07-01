@@ -132,21 +132,22 @@ class TestPerformanceTracker:
         mock_tracemalloc.start.assert_called_once()
 
     @patch('src.performance.tracemalloc')
-    @patch('time.perf_counter')
-    def test_stop_tracking(self, mock_perf_counter, mock_tracemalloc, tracker):
+    def test_stop_tracking(self, mock_tracemalloc, tracker):
         """Test stopping performance tracking."""
         # Setup mocks
         mock_tracemalloc.is_tracing.return_value = True
-        mock_perf_counter.return_value = 100.0  # Fixed start time
         
-        # Start tracking with fixed memory
+        # Start tracking with fixed memory and time
         with patch.object(tracker, '_get_memory_usage', return_value=1.0):
             operation_id = tracker.start_tracking("test_op")
+            
+        # Manually set start time to control timing
+        start_time = tracker._metrics[operation_id].start_time
         
-        # Mock stop tracking with different time and memory
-        mock_perf_counter.return_value = 102.5  # 2.5 seconds later
+        # Mock stop tracking with different memory and calculate proper execution time
         with patch.object(tracker, '_get_memory_usage', return_value=3.0):  # 3MB total, 2MB increase
-            metrics = tracker.stop_tracking(operation_id)
+            with patch('time.perf_counter', return_value=start_time + 2.5):  # 2.5 seconds later
+                metrics = tracker.stop_tracking(operation_id)
         
         assert metrics.execution_time == 2.5
         assert metrics.memory_usage_mb == 2.0  # 3.0 - 1.0 = 2MB increase
