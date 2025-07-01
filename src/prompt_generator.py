@@ -176,8 +176,8 @@ class PromptGenerator:
             "code_requirements": config.code_requirements,
             "role": "developer",
             # Structured data for advanced templates
-            "best_practices_list": best_practices_list[:3],
-            "tools_list": tools_list[:3],
+            "best_practices_list": best_practices_list[:10],  # Increased for comprehensive coverage
+            "tools_list": tools_list[:10],  # Increased for comprehensive coverage
             "primary_tech": config.technologies[0] if config.technologies else "development",
             "practice_details": practice_details,
         }

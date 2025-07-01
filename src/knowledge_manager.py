@@ -108,8 +108,16 @@ class KnowledgeManager:
         Returns:
             A dictionary containing the tool's details, or None if not found or an error occurs.
         """
+        # Handle mixed data types (string or dict objects)
+        if isinstance(tool_name, dict):
+            # If already a dict, return it as-is
+            return tool_name
+        
+        # Ensure we have a string for filename operations
+        tool_name_str = str(tool_name)
+        
         # Normalize name to match filename convention (lowercase, underscores)
-        filename = f"{tool_name.lower().replace(' ', '_')}.json"
+        filename = f"{tool_name_str.lower().replace(' ', '_')}.json"
         filepath = safe_path_join(self.knowledge_base_root, "knowledge_base", "tools", filename)
 
         if filepath in self._cache:

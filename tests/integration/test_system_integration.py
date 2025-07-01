@@ -182,7 +182,7 @@ def calculate_order_total(items: List[OrderItem]) -> Decimal:
 
         # Initialize system components
         generator = PromptGenerator(
-            env["prompts_dir"], env["config_file"], base_path=env["base_path"]
+            env["prompts_dir"], env["config_file"]
         )
 
         # Test comprehensive Python feature development workflow
@@ -226,7 +226,7 @@ def calculate_order_total(items: List[OrderItem]) -> Decimal:
         env = integrated_system_setup
 
         generator = PromptGenerator(
-            env["prompts_dir"], env["config_file"], base_path=env["base_path"]
+            env["prompts_dir"], env["config_file"]
         )
 
         config = PromptConfig(
@@ -294,7 +294,7 @@ class TestPerformanceIntegration:
         )
 
         generator = PromptGenerator(
-            env["prompts_dir"], env["config_file"], base_path=env["base_path"]
+            env["prompts_dir"], env["config_file"]
         )
 
         # Test prompt generation with performance monitoring
@@ -341,7 +341,7 @@ class TestErrorHandlingIntegration:
             json.dump(partial_config, f)
 
         generator = PromptGenerator(
-            env["prompts_dir"], str(config_file), base_path=env["base_path"]
+            env["prompts_dir"], str(config_file)
         )
 
         config = PromptConfig(
@@ -373,7 +373,7 @@ class TestConfigurationIntegration:
 
         # Initialize components with same configuration
         generator = PromptGenerator(
-            env["prompts_dir"], env["config_file"], base_path=env["base_path"]
+            env["prompts_dir"], env["config_file"]
         )
         km = KnowledgeManager(env["config_file"], base_path=env["base_path"])
 
@@ -444,7 +444,7 @@ class TestWorkflowOrchestration:
         ]
 
         generator = PromptGenerator(
-            env["prompts_dir"], env["config_file"], base_path=env["base_path"]
+            env["prompts_dir"], env["config_file"]
         )
 
         # Execute complete workflow
@@ -479,7 +479,7 @@ class TestWorkflowOrchestration:
         env = integrated_system_setup
 
         generator = PromptGenerator(
-            env["prompts_dir"], env["config_file"], base_path=env["base_path"]
+            env["prompts_dir"], env["config_file"]
         )
 
         # Multi-technology project workflow
