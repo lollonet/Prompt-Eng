@@ -21,18 +21,19 @@ Usage Examples:
   python main.py --list-tech
 """
 
-from src.prompt_generator import PromptGenerator
-from src.prompt_config import PromptConfig, SpecificOptions
-from typing import List, Tuple, Dict, Any, Optional
+import argparse
+import json
+import logging
 import os
 import sys
-import json
-import argparse
-import logging
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+
+from src.prompt_config import PromptConfig, SpecificOptions
+from src.prompt_generator import PromptGenerator
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Define paths relative to the project root
@@ -40,12 +41,13 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 PROMPTS_DIR = os.path.join(PROJECT_ROOT, "prompts")
 CONFIG_PATH = os.path.join(PROJECT_ROOT, "config", "tech_stack_mapping.json")
 
+
 def generate_example_prompt(generator: PromptGenerator, config: PromptConfig, title: str) -> None:
     """
     Generates and displays a single example prompt.
-    
+
     Eliminates code duplication in main() by extracting common pattern.
-    
+
     Args:
         generator: The PromptGenerator instance.
         config: Configuration for prompt generation.
@@ -53,16 +55,17 @@ def generate_example_prompt(generator: PromptGenerator, config: PromptConfig, ti
     """
     logger.info(f"Generating prompt for: {title}")
     prompt = generator.generate_prompt(config)
-    
+
     separator = "-" * (len(title) + 8)
     print(f"\n--- {title} ---")
     print(prompt)
     print(separator)
 
+
 def create_example_configs() -> List[Tuple[PromptConfig, str]]:
     """
     Creates list of example configurations for demonstration.
-    
+
     Returns:
         List of tuples containing (config, title) pairs.
     """
@@ -73,9 +76,9 @@ def create_example_configs() -> List[Tuple[PromptConfig, str]]:
                 task_type="authentication API development",
                 task_description="API endpoint for user registration with input validation and password hashing",
                 code_requirements="The code must be modular, testable, and follow SOLID principles. Use an ORM for database interaction.",
-                template_name="language_specific/python/production_api_prompt.txt"
+                template_name="language_specific/python/production_api_prompt.txt",
             ),
-            "Generated Prompt (Python API)"
+            "Generated Prompt (Python API)",
         ),
         (
             PromptConfig(
@@ -83,9 +86,9 @@ def create_example_configs() -> List[Tuple[PromptConfig, str]]:
                 task_type="UI component development",
                 task_description="React component for a login form with client-side validation",
                 code_requirements="The component must be reusable, accessible, and use React Hooks. Manage form state efficiently.",
-                template_name="framework_specific/react/production_component_prompt.txt"
+                template_name="framework_specific/react/production_component_prompt.txt",
             ),
-            "Generated Prompt (React Component)"
+            "Generated Prompt (React Component)",
         ),
         (
             PromptConfig(
@@ -93,38 +96,55 @@ def create_example_configs() -> List[Tuple[PromptConfig, str]]:
                 task_type="infrastructure deployment automation",
                 task_description="local development environment with Docker Compose and Ansible script for deployment to remote server",
                 code_requirements="The environment must be reproducible, easy to configure, and deployment must be automated and idempotent.",
-                template_name="base_prompts/production_devops_prompt.txt"
+                template_name="base_prompts/production_devops_prompt.txt",
             ),
-            "Generated Prompt (DevOps Infrastructure)"
-        )
+            "Generated Prompt (DevOps Infrastructure)",
+        ),
     ]
+
 
 class PromptEngineeringCLI:
     """
     Advanced CLI for prompt engineering with comprehensive features.
     """
-    
+
     def __init__(self):
         self.generator = None
         self.available_technologies = []
         self.predefined_examples = self._load_predefined_examples()
-        
+
     def _select_optimal_template(self, technologies: List[str], task_type: str) -> str:
         """Intelligently select the best focused template based on technologies and task type."""
         task_lower = task_type.lower()
-        
+
         # API development
-        if any(word in task_lower for word in ['api', 'endpoint', 'rest', 'service', 'backend']) and 'python' in technologies:
+        if (
+            any(word in task_lower for word in ["api", "endpoint", "rest", "service", "backend"])
+            and "python" in technologies
+        ):
             return "base_prompts/focused_api_prompt.txt"
-        
-        # React component development  
-        if any(word in task_lower for word in ['component', 'ui', 'frontend', 'form', 'interface']) and 'react' in technologies:
+
+        # React component development
+        if (
+            any(word in task_lower for word in ["component", "ui", "frontend", "form", "interface"])
+            and "react" in technologies
+        ):
             return "framework_specific/react/focused_component_prompt.txt"
-        
+
         # DevOps/Infrastructure tasks
-        if any(word in task_lower for word in ['infrastructure', 'deployment', 'devops', 'container', 'environment', 'automation']):
+        if any(
+            word in task_lower
+            for word in [
+                "infrastructure",
+                "deployment",
+                "devops",
+                "container",
+                "environment",
+                "automation",
+            ]
+        ):
             return "base_prompts/focused_devops_prompt.txt"
-            
+
         # Default to focused API template (most common use case)
         return "base_prompts/focused_api_prompt.txt"
 
@@ -136,61 +156,62 @@ class PromptEngineeringCLI:
                 "task_type": "REST API development",
                 "task_description": "user management API with JWT authentication and CRUD operations",
                 "code_requirements": "Include password hashing, input validation, error handling, and basic tests",
-                "template_name": "base_prompts/focused_api_prompt.txt"
+                "template_name": "base_prompts/focused_api_prompt.txt",
             },
             "react-app": {
                 "technologies": ["javascript", "react"],
-                "task_type": "frontend component development", 
+                "task_type": "frontend component development",
                 "task_description": "login form component with validation and TypeScript",
                 "code_requirements": "Include form validation, loading states, accessibility features, and error handling",
-                "template_name": "framework_specific/react/focused_component_prompt.txt"
+                "template_name": "framework_specific/react/focused_component_prompt.txt",
             },
             "django-app": {
                 "technologies": ["python", "django"],
                 "task_type": "web API development",
                 "task_description": "Django REST API for blog posts with user authentication",
                 "code_requirements": "Include Django REST framework, JWT authentication, serializers, and basic tests",
-                "template_name": "base_prompts/focused_api_prompt.txt"
+                "template_name": "base_prompts/focused_api_prompt.txt",
             },
             "devops-setup": {
                 "technologies": ["docker", "docker_compose", "ansible"],
                 "task_type": "infrastructure deployment automation",
                 "task_description": "containerized web application with database and automated deployment",
                 "code_requirements": "Include multi-stage Docker builds, health checks, environment configuration, and Ansible playbooks",
-                "template_name": "base_prompts/focused_devops_prompt.txt"
+                "template_name": "base_prompts/focused_devops_prompt.txt",
             },
             "enterprise-stack": {
                 "technologies": ["python", "postgresql", "redis", "docker"],
                 "task_type": "REST API development",
                 "task_description": "scalable microservice with database and caching",
                 "code_requirements": "Include PostgreSQL integration, Redis caching, Docker containerization, and monitoring",
-                "template_name": "base_prompts/focused_api_prompt.txt"
-            }
+                "template_name": "base_prompts/focused_api_prompt.txt",
+            },
         }
-    
+
     def _load_available_technologies(self) -> List[str]:
         """Load available technologies from configuration."""
         try:
             import json
-            with open(CONFIG_PATH, 'r') as f:
+
+            with open(CONFIG_PATH, "r") as f:
                 config = json.load(f)
                 return sorted(list(config.keys()))
         except Exception as e:
             logger.warning(f"Could not load technologies from config: {e}")
             return ["python", "javascript", "react", "django", "fastapi", "docker", "postgresql"]
-    
+
     def _initialize_generator(self):
         """Initialize the prompt generator if not already done."""
         if self.generator is None:
             self.generator = PromptGenerator(PROMPTS_DIR, CONFIG_PATH)
             self.available_technologies = self._load_available_technologies()
-    
+
     def list_technologies(self) -> None:
         """Display all available technologies."""
         self._initialize_generator()
         print("\n🔧 Available Technologies:")
         print("=" * 50)
-        
+
         # Group technologies by category for better readability
         categories = {
             "Languages": ["python", "javascript", "typescript", "java", "go"],
@@ -198,13 +219,13 @@ class PromptEngineeringCLI:
             "Databases": ["postgresql", "mysql", "mongodb", "redis"],
             "DevOps": ["docker", "docker_compose", "ansible", "kubernetes"],
             "Cloud": ["aws", "azure", "gcp"],
-            "Other": []
+            "Other": [],
         }
-        
+
         # Categorize available technologies
         categorized = {cat: [] for cat in categories}
         uncategorized = []
-        
+
         for tech in self.available_technologies:
             found = False
             for category, tech_list in categories.items():
@@ -214,104 +235,107 @@ class PromptEngineeringCLI:
                     break
             if not found:
                 uncategorized.append(tech)
-        
+
         # Display categorized technologies
         for category, techs in categorized.items():
             if techs:
                 print(f"\n{category}:")
                 for tech in sorted(techs):
                     print(f"  - {tech}")
-        
+
         if uncategorized:
             print(f"\nOther:")
             for tech in sorted(uncategorized):
                 print(f"  - {tech}")
-        
+
         print(f"\nTotal: {len(self.available_technologies)} technologies available")
-    
+
     def list_examples(self) -> None:
         """Display all predefined examples."""
         print("\n📋 Predefined Example Scenarios:")
         print("=" * 50)
-        
+
         for name, config in self.predefined_examples.items():
             print(f"\n🚀 {name}")
             print(f"   Technologies: {', '.join(config['technologies'])}")
             print(f"   Task: {config['task_type']}")
             print(f"   Description: {config['task_description'][:100]}...")
-        
+
         print(f"\nUsage: python main.py --example <name> [--format json|markdown]")
-    
+
     def interactive_prompt_creation(self) -> PromptConfig:
         """Interactive mode for creating prompts."""
         print("\n🤖 Interactive Prompt Creation")
         print("=" * 50)
-        
+
         # Technology selection
         print(f"\nAvailable technologies: {', '.join(self.available_technologies[:10])}...")
         print("(Use --list-tech to see all available technologies)")
-        
+
         tech_input = input("\nEnter technologies (space-separated): ").strip()
         technologies = [t.strip() for t in tech_input.split() if t.strip()]
-        
+
         if not technologies:
             print("❌ No technologies specified. Using 'python' as default.")
             technologies = ["python"]
-        
+
         # Task type
         task_type = input("\nEnter task type (e.g., 'web application development'): ").strip()
         if not task_type:
             task_type = "software development"
-        
+
         # Task description
         print("\nEnter detailed task description:")
         task_description = input("Description: ").strip()
         if not task_description:
             task_description = "Implement the requested functionality following best practices"
-        
+
         # Code requirements
         print("\nEnter specific code requirements (optional):")
         code_requirements = input("Requirements: ").strip()
         if not code_requirements:
             code_requirements = "Follow best practices and write clean, maintainable code"
-        
+
         return PromptConfig(
             technologies=technologies,
             task_type=task_type,
             task_description=task_description,
             code_requirements=code_requirements,
-            template_name="base_prompts/generic_code_prompt.txt"
+            template_name="base_prompts/generic_code_prompt.txt",
         )
-    
+
     def generate_from_example(self, example_name: str) -> Optional[PromptConfig]:
         """Generate prompt from predefined example."""
         if example_name not in self.predefined_examples:
             print(f"❌ Example '{example_name}' not found.")
             print("Available examples:", ", ".join(self.predefined_examples.keys()))
             return None
-        
+
         example = self.predefined_examples[example_name]
         return PromptConfig(**example)
-    
+
     def format_output(self, prompt: str, format_type: str, config: PromptConfig) -> str:
         """Format output based on requested format."""
         if format_type == "json":
-            return json.dumps({
-                "prompt": prompt,
-                "configuration": {
-                    "technologies": config.technologies,
-                    "task_type": config.task_type,
-                    "task_description": config.task_description,
-                    "code_requirements": config.code_requirements,
-                    "template_name": config.template_name
+            return json.dumps(
+                {
+                    "prompt": prompt,
+                    "configuration": {
+                        "technologies": config.technologies,
+                        "task_type": config.task_type,
+                        "task_description": config.task_description,
+                        "code_requirements": config.code_requirements,
+                        "template_name": config.template_name,
+                    },
+                    "metadata": {
+                        "generated_at": "2025-06-30",
+                        "tool_version": "1.0.0",
+                        "character_count": len(prompt),
+                    },
                 },
-                "metadata": {
-                    "generated_at": "2025-06-30",
-                    "tool_version": "1.0.0",
-                    "character_count": len(prompt)
-                }
-            }, indent=2)
-        
+                indent=2,
+            )
+
         elif format_type == "markdown":
             return f"""# Generated Prompt
 
@@ -335,7 +359,7 @@ class PromptEngineeringCLI:
 ---
 *Generated by Advanced Prompt Engineering CLI*
 """
-        
+
         else:  # text format (default)
             return f"""
 🚀 Generated Prompt
@@ -350,6 +374,7 @@ Template: {config.template_name}
 {'=' * 50}
 Character Count: {len(prompt)}
 """
+
 
 def create_argument_parser() -> argparse.ArgumentParser:
     """Create and configure the command-line argument parser."""
@@ -374,274 +399,253 @@ For shell autocomplete:
   # Fish
   %(prog)s --print-completion fish | source
         """,
-        formatter_class=argparse.RawDescriptionHelpFormatter
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    
+
     # Main command groups
-    main_group = parser.add_argument_group('Main Commands')
-    
+    main_group = parser.add_argument_group("Main Commands")
+
     main_group.add_argument(
-        '--tech', '--technologies',
-        nargs='+',
-        metavar='TECH',
-        help='Technologies to include (e.g., python react docker). Use --list-tech to see available options.'
+        "--tech",
+        "--technologies",
+        nargs="+",
+        metavar="TECH",
+        help="Technologies to include (e.g., python react docker). Use --list-tech to see available options.",
     )
-    
+
     main_group.add_argument(
-        '--task',
-        metavar='DESCRIPTION',
-        help='Task type or description (e.g., "web application development")'
+        "--task",
+        metavar="DESCRIPTION",
+        help='Task type or description (e.g., "web application development")',
     )
-    
+
+    main_group.add_argument("--description", metavar="TEXT", help="Detailed task description")
+
     main_group.add_argument(
-        '--description',
-        metavar='TEXT',
-        help='Detailed task description'
+        "--requirements", metavar="TEXT", help="Specific code requirements and constraints"
     )
-    
+
     main_group.add_argument(
-        '--requirements',
-        metavar='TEXT',
-        help='Specific code requirements and constraints'
+        "--template",
+        metavar="PATH",
+        default="base_prompts/production_ready_prompt.txt",
+        help="Template file to use (default: %(default)s)",
     )
-    
-    main_group.add_argument(
-        '--template',
-        metavar='PATH',
-        default='base_prompts/production_ready_prompt.txt',
-        help='Template file to use (default: %(default)s)'
-    )
-    
+
     # Predefined examples
-    examples_group = parser.add_argument_group('Predefined Examples')
-    
+    examples_group = parser.add_argument_group("Predefined Examples")
+
     examples_group.add_argument(
-        '--example',
-        metavar='NAME',
-        help='Use predefined example (python-api, react-app, django-app, devops-setup, enterprise-stack)'
+        "--example",
+        metavar="NAME",
+        help="Use predefined example (python-api, react-app, django-app, devops-setup, enterprise-stack)",
     )
-    
+
     examples_group.add_argument(
-        '--list-examples',
-        action='store_true',
-        help='List all predefined example scenarios'
+        "--list-examples", action="store_true", help="List all predefined example scenarios"
     )
-    
+
     # Output and formatting
-    output_group = parser.add_argument_group('Output Options')
-    
+    output_group = parser.add_argument_group("Output Options")
+
     output_group.add_argument(
-        '--format',
-        choices=['text', 'json', 'markdown'],
-        default='text',
-        help='Output format (default: %(default)s)'
+        "--format",
+        choices=["text", "json", "markdown"],
+        default="text",
+        help="Output format (default: %(default)s)",
     )
-    
+
     output_group.add_argument(
-        '--output', '-o',
-        metavar='FILE',
-        help='Write output to file instead of stdout'
+        "--output", "-o", metavar="FILE", help="Write output to file instead of stdout"
     )
-    
+
     output_group.add_argument(
-        '--quiet', '-q',
-        action='store_true',
-        help='Suppress info messages, only show generated prompt'
+        "--quiet",
+        "-q",
+        action="store_true",
+        help="Suppress info messages, only show generated prompt",
     )
-    
+
     # Specific technology options
-    specific_group = parser.add_argument_group('Technology-Specific Options')
-    
+    specific_group = parser.add_argument_group("Technology-Specific Options")
+
     # Infrastructure options
     specific_group.add_argument(
-        '--distro',
-        choices=['rhel9', 'ubuntu22', 'centos8', 'debian11', 'rocky9', 'alma9'],
-        help='Linux distribution for infrastructure tasks'
+        "--distro",
+        choices=["rhel9", "ubuntu22", "centos8", "debian11", "rocky9", "alma9"],
+        help="Linux distribution for infrastructure tasks",
     )
-    
+
     specific_group.add_argument(
-        '--cloud-provider',
-        choices=['aws', 'azure', 'gcp', 'on-premise'],
-        help='Cloud provider for infrastructure deployment'
+        "--cloud-provider",
+        choices=["aws", "azure", "gcp", "on-premise"],
+        help="Cloud provider for infrastructure deployment",
     )
-    
+
     specific_group.add_argument(
-        '--region',
-        metavar='REGION',
-        help='Cloud region (e.g., eu-west-1, us-east-1)'
+        "--region", metavar="REGION", help="Cloud region (e.g., eu-west-1, us-east-1)"
     )
-    
+
     # Database options
     specific_group.add_argument(
-        '--db-engine',
-        choices=['patroni', 'postgresql', 'mysql', 'mongodb', 'redis', 'etcd'],
-        help='Database engine for database-related tasks'
+        "--db-engine",
+        choices=["patroni", "postgresql", "mysql", "mongodb", "redis", "etcd"],
+        help="Database engine for database-related tasks",
     )
-    
+
     specific_group.add_argument(
-        '--db-version',
-        metavar='VERSION',
-        help='Database version (e.g., 14, 15, 16 for PostgreSQL)'
+        "--db-version", metavar="VERSION", help="Database version (e.g., 14, 15, 16 for PostgreSQL)"
     )
-    
+
     specific_group.add_argument(
-        '--cluster-size',
-        type=int,
-        metavar='N',
-        help='Number of nodes in cluster setup'
+        "--cluster-size", type=int, metavar="N", help="Number of nodes in cluster setup"
     )
-    
+
     # Container/Orchestration options
     specific_group.add_argument(
-        '--container-runtime',
-        choices=['docker', 'podman', 'containerd', 'cri-o'],
-        help='Container runtime for containerization tasks'
+        "--container-runtime",
+        choices=["docker", "podman", "containerd", "cri-o"],
+        help="Container runtime for containerization tasks",
     )
-    
+
     specific_group.add_argument(
-        '--orchestrator',
-        choices=['k8s', 'kubernetes', 'docker-compose', 'nomad', 'etcd', 'swarm'],
-        help='Container orchestration platform'
+        "--orchestrator",
+        choices=["k8s", "kubernetes", "docker-compose", "nomad", "etcd", "swarm"],
+        help="Container orchestration platform",
     )
-    
+
     specific_group.add_argument(
-        '--ingress-controller',
-        choices=['nginx', 'traefik', 'haproxy', 'envoy', 'istio'],
-        help='Ingress controller for Kubernetes deployments'
+        "--ingress-controller",
+        choices=["nginx", "traefik", "haproxy", "envoy", "istio"],
+        help="Ingress controller for Kubernetes deployments",
     )
-    
+
     # Monitoring options
     specific_group.add_argument(
-        '--monitoring-stack',
-        nargs='+',
-        choices=['prometheus', 'nagios', 'grafana', 'victoria-metrics', 'zabbix'],
-        help='Monitoring tools to include (can specify multiple)'
+        "--monitoring-stack",
+        nargs="+",
+        choices=["prometheus", "nagios", "grafana", "victoria-metrics", "zabbix"],
+        help="Monitoring tools to include (can specify multiple)",
     )
-    
+
     specific_group.add_argument(
-        '--logging-stack',
-        nargs='+',
-        choices=['elk', 'elasticsearch', 'loki', 'fluentd', 'logstash', 'kibana'],
-        help='Logging tools to include (can specify multiple)'
+        "--logging-stack",
+        nargs="+",
+        choices=["elk", "elasticsearch", "loki", "fluentd", "logstash", "kibana"],
+        help="Logging tools to include (can specify multiple)",
     )
-    
+
     # Security options
     specific_group.add_argument(
-        '--security-standards',
-        nargs='+',
-        choices=['fips140-2', 'pci-dss', 'hipaa', 'gdpr', 'sox', 'iso27001'],
-        help='Security compliance standards (can specify multiple)'
+        "--security-standards",
+        nargs="+",
+        choices=["fips140-2", "pci-dss", "hipaa", "gdpr", "sox", "iso27001"],
+        help="Security compliance standards (can specify multiple)",
     )
-    
+
     specific_group.add_argument(
-        '--encryption',
-        choices=['tls1.3', 'aes256', 'rsa4096', 'ecdsa', 'chacha20'],
-        help='Encryption standard to use'
+        "--encryption",
+        choices=["tls1.3", "aes256", "rsa4096", "ecdsa", "chacha20"],
+        help="Encryption standard to use",
     )
-    
+
     # Development options
     specific_group.add_argument(
-        '--framework-version',
-        metavar='VERSION',
-        help='Specific framework version (e.g., fastapi==0.104.1)'
+        "--framework-version",
+        metavar="VERSION",
+        help="Specific framework version (e.g., fastapi==0.104.1)",
     )
-    
+
     specific_group.add_argument(
-        '--testing-framework',
-        choices=['pytest', 'jest', 'cypress', 'junit', 'mocha', 'phpunit'],
-        help='Testing framework to use'
+        "--testing-framework",
+        choices=["pytest", "jest", "cypress", "junit", "mocha", "phpunit"],
+        help="Testing framework to use",
     )
-    
+
     specific_group.add_argument(
-        '--ci-cd-platform',
-        choices=['gitlab-ci', 'github-actions', 'jenkins', 'azure-devops', 'circleci'],
-        help='CI/CD platform for automation'
+        "--ci-cd-platform",
+        choices=["gitlab-ci", "github-actions", "jenkins", "azure-devops", "circleci"],
+        help="CI/CD platform for automation",
     )
-    
+
     # High availability options
     specific_group.add_argument(
-        '--ha-setup',
-        action='store_true',
-        help='Enable high availability configuration'
+        "--ha-setup", action="store_true", help="Enable high availability configuration"
     )
-    
+
     specific_group.add_argument(
-        '--backup-strategy',
-        choices=['continuous', 'scheduled', 'snapshot', 'incremental'],
-        help='Backup strategy for data persistence'
+        "--backup-strategy",
+        choices=["continuous", "scheduled", "snapshot", "incremental"],
+        help="Backup strategy for data persistence",
     )
-    
+
     specific_group.add_argument(
-        '--disaster-recovery',
-        action='store_true',
-        help='Include disaster recovery configuration'
+        "--disaster-recovery", action="store_true", help="Include disaster recovery configuration"
     )
-    
+
     # Web research options
-    research_group = parser.add_argument_group('Web Research Options')
-    
+    research_group = parser.add_argument_group("Web Research Options")
+
     research_group.add_argument(
-        '--auto-research',
-        action='store_true',
-        help='Enable automatic web research for unknown technologies'
+        "--auto-research",
+        action="store_true",
+        help="Enable automatic web research for unknown technologies",
     )
-    
+
     research_group.add_argument(
-        '--research-quality',
-        choices=['excellent', 'good', 'fair'],
-        default='good',
-        help='Minimum research quality threshold (default: good)'
+        "--research-quality",
+        choices=["excellent", "good", "fair"],
+        default="good",
+        help="Minimum research quality threshold (default: good)",
     )
-    
+
     research_group.add_argument(
-        '--max-research-time',
+        "--max-research-time",
         type=int,
         default=120,
-        metavar='SECONDS',
-        help='Maximum time for research per technology (default: 120s)'
+        metavar="SECONDS",
+        help="Maximum time for research per technology (default: 120s)",
     )
-    
+
     research_group.add_argument(
-        '--cache-research',
-        action='store_true',
+        "--cache-research",
+        action="store_true",
         default=True,
-        help='Cache research results for reuse (default: enabled)'
+        help="Cache research results for reuse (default: enabled)",
     )
-    
+
     # Information commands
-    info_group = parser.add_argument_group('Information Commands')
-    
+    info_group = parser.add_argument_group("Information Commands")
+
     info_group.add_argument(
-        '--list-tech',
-        action='store_true',
-        help='List all available technologies'
+        "--list-tech", action="store_true", help="List all available technologies"
     )
-    
+
     info_group.add_argument(
-        '--interactive', '-i',
-        action='store_true',
-        help='Interactive mode for guided prompt creation'
+        "--interactive",
+        "-i",
+        action="store_true",
+        help="Interactive mode for guided prompt creation",
     )
-    
+
     info_group.add_argument(
-        '--version',
-        action='version',
-        version='%(prog)s 1.0.0 - Advanced Prompt Engineering CLI'
+        "--version", action="version", version="%(prog)s 1.0.0 - Advanced Prompt Engineering CLI"
     )
-    
+
     # Shell completion (hidden from help but functional)
     parser.add_argument(
-        '--print-completion',
-        choices=['bash', 'zsh', 'fish'],
-        help=argparse.SUPPRESS  # Hide from help but keep functional
+        "--print-completion",
+        choices=["bash", "zsh", "fish"],
+        help=argparse.SUPPRESS,  # Hide from help but keep functional
     )
-    
+
     return parser
+
 
 def generate_shell_completion(shell: str) -> str:
     """Generate shell completion script."""
-    if shell == 'bash':
-        return '''
+    if shell == "bash":
+        return """
 _prompt_engineer_completion() {
     local cur prev opts
     COMPREPLY=()
@@ -671,9 +675,9 @@ _prompt_engineer_completion() {
 }
 complete -F _prompt_engineer_completion prompt-engineer
 complete -F _prompt_engineer_completion python main.py
-        '''
-    elif shell == 'zsh':
-        return '''
+        """
+    elif shell == "zsh":
+        return """
 #compdef prompt-engineer
 
 _prompt_engineer() {
@@ -708,9 +712,9 @@ _examples() {
 }
 
 _prompt_engineer "$@"
-        '''
-    elif shell == 'fish':
-        return '''
+        """
+    elif shell == "fish":
+        return """
 # Fish shell completion for prompt-engineer
 
 complete -c prompt-engineer -s h -l help -d "Show help message"
@@ -727,9 +731,10 @@ complete -c prompt-engineer -s q -l quiet -d "Quiet mode"
 complete -c prompt-engineer -l list-tech -d "List available technologies"
 complete -c prompt-engineer -s i -l interactive -d "Interactive mode"
 complete -c prompt-engineer -l version -d "Show version"
-        '''
-    
+        """
+
     return ""
+
 
 async def main():
     """
@@ -737,34 +742,34 @@ async def main():
     """
     parser = create_argument_parser()
     args = parser.parse_args()
-    
+
     # Handle shell completion
     if args.print_completion:
         print(generate_shell_completion(args.print_completion))
         return
-    
+
     # Configure logging based on quiet flag
     if args.quiet:
         logging.getLogger().setLevel(logging.WARNING)
-    
+
     # Initialize CLI
     cli = PromptEngineeringCLI()
-    
+
     # Handle information commands
     if args.list_tech:
         cli.list_technologies()
         return
-    
+
     if args.list_examples:
         cli.list_examples()
         return
-    
+
     # Initialize generator for prompt generation
     cli._initialize_generator()
-    
+
     # Determine prompt configuration
     config = None
-    
+
     if args.interactive:
         config = cli.interactive_prompt_creation()
     elif args.example:
@@ -775,41 +780,43 @@ async def main():
         # Build config from command line arguments with intelligent template selection
         task_type = args.task or "software development"
         template_name = args.template
-        
+
         # Use intelligent template selection if default template is being used
         if template_name == "base_prompts/production_ready_prompt.txt":
             template_name = cli._select_optimal_template(args.tech, task_type)
-        
+
         # Create specific options from command line arguments
         specific_options = SpecificOptions(
-            distro=getattr(args, 'distro', None),
-            cloud_provider=getattr(args, 'cloud_provider', None),
-            region=getattr(args, 'region', None),
-            db_engine=getattr(args, 'db_engine', None),
-            db_version=getattr(args, 'db_version', None),
-            cluster_size=getattr(args, 'cluster_size', None),
-            container_runtime=getattr(args, 'container_runtime', None),
-            orchestrator=getattr(args, 'orchestrator', None),
-            ingress_controller=getattr(args, 'ingress_controller', None),
-            monitoring_stack=getattr(args, 'monitoring_stack', None) or [],
-            logging_stack=getattr(args, 'logging_stack', None) or [],
-            security_standards=getattr(args, 'security_standards', None) or [],
-            encryption=getattr(args, 'encryption', None),
-            framework_version=getattr(args, 'framework_version', None),
-            testing_framework=getattr(args, 'testing_framework', None),
-            ci_cd_platform=getattr(args, 'ci_cd_platform', None),
-            ha_setup=getattr(args, 'ha_setup', False),
-            backup_strategy=getattr(args, 'backup_strategy', None),
-            disaster_recovery=getattr(args, 'disaster_recovery', False)
+            distro=getattr(args, "distro", None),
+            cloud_provider=getattr(args, "cloud_provider", None),
+            region=getattr(args, "region", None),
+            db_engine=getattr(args, "db_engine", None),
+            db_version=getattr(args, "db_version", None),
+            cluster_size=getattr(args, "cluster_size", None),
+            container_runtime=getattr(args, "container_runtime", None),
+            orchestrator=getattr(args, "orchestrator", None),
+            ingress_controller=getattr(args, "ingress_controller", None),
+            monitoring_stack=getattr(args, "monitoring_stack", None) or [],
+            logging_stack=getattr(args, "logging_stack", None) or [],
+            security_standards=getattr(args, "security_standards", None) or [],
+            encryption=getattr(args, "encryption", None),
+            framework_version=getattr(args, "framework_version", None),
+            testing_framework=getattr(args, "testing_framework", None),
+            ci_cd_platform=getattr(args, "ci_cd_platform", None),
+            ha_setup=getattr(args, "ha_setup", False),
+            backup_strategy=getattr(args, "backup_strategy", None),
+            disaster_recovery=getattr(args, "disaster_recovery", False),
         )
-        
+
         config = PromptConfig(
             technologies=args.tech,
             task_type=task_type,
-            task_description=args.description or "Implement the requested functionality following best practices",
-            code_requirements=args.requirements or "Follow best practices and write clean, maintainable code",
+            task_description=args.description
+            or "Implement the requested functionality following best practices",
+            code_requirements=args.requirements
+            or "Follow best practices and write clean, maintainable code",
             template_name=template_name,
-            specific_options=specific_options
+            specific_options=specific_options,
         )
     else:
         # No configuration provided, show help
@@ -819,38 +826,39 @@ async def main():
         print("  --example python-api   # Use predefined example")
         print("  --tech python --task 'API development'  # Direct configuration")
         return
-    
+
     # Check for unknown technologies and auto-research if enabled
-    if getattr(args, 'auto_research', False):
+    if getattr(args, "auto_research", False):
         try:
-            from src.web_research.web_researcher import ResearchOrchestrator
             from src.web_research.config import WebResearchConfig
-            
+            from src.web_research.web_researcher import ResearchOrchestrator
+
             # Initialize research orchestrator
             research_config = WebResearchConfig()
             orchestrator = ResearchOrchestrator(research_config)
-            
+
             # Prepare user context with specific options
             user_context = {
-                'task_type': config.task_type,
-                'task_description': config.task_description,
-                'code_requirements': config.code_requirements,
-                'specific_options': config.specific_options
+                "task_type": config.task_type,
+                "task_description": config.task_description,
+                "code_requirements": config.code_requirements,
+                "specific_options": config.specific_options,
             }
-            
+
             if not args.quiet:
                 print("🔍 Checking for unknown technologies...")
-            
+
             # Process unknown technologies
             research_results = await orchestrator.process_unknown_technologies(
-                config.technologies,
-                user_context
+                config.technologies, user_context
             )
-            
+
             if research_results:
                 if not args.quiet:
-                    print(f"✅ Generated dynamic templates for {len(research_results)} technologies")
-                
+                    print(
+                        f"✅ Generated dynamic templates for {len(research_results)} technologies"
+                    )
+
                 # Use the generated template for the first technology
                 primary_tech = config.technologies[0]
                 if primary_tech in research_results:
@@ -864,9 +872,9 @@ async def main():
                 # No unknown technologies, use standard generation
                 prompt = cli.generator.generate_prompt(config)
                 formatted_output = cli.format_output(prompt, args.format, config)
-            
+
             await orchestrator.close()
-            
+
         except ImportError:
             if not args.quiet:
                 print("⚠️  Web research module not available, using standard generation")
@@ -882,32 +890,34 @@ async def main():
         # Standard prompt generation
         if not args.quiet:
             logger.info(f"Generating prompt for technologies: {config.technologies}")
-        
+
         prompt = cli.generator.generate_prompt(config)
         formatted_output = cli.format_output(prompt, args.format, config)
-    
+
     # Output handling (moved outside the else block)
     if args.output:
-        with open(args.output, 'w') as f:
+        with open(args.output, "w") as f:
             f.write(formatted_output)
         if not args.quiet:
             print(f"✅ Prompt written to {args.output}")
     else:
         print(formatted_output)
-    
+
     if not args.quiet:
         logger.info("Prompt generation completed successfully")
+
 
 # Legacy compatibility function
 def run_legacy_examples():
     """Run the original example scenarios for backward compatibility."""
     logger.info("Running legacy examples for backward compatibility...")
     generator = PromptGenerator(PROMPTS_DIR, CONFIG_PATH)
-    
+
     example_configs = create_example_configs()
-    
+
     for config, title in example_configs:
         generate_example_prompt(generator, config, title)
+
 
 if __name__ == "__main__":
     # Check if running in legacy mode (no arguments)
@@ -921,4 +931,5 @@ if __name__ == "__main__":
         run_legacy_examples()
     else:
         import asyncio
+
         asyncio.run(main())

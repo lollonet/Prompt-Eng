@@ -6,8 +6,8 @@ Terraform, CloudFormation, and cloud-specific deployment templates.
 """
 
 import logging
-from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
 from .base_engine import ITemplateEngine, TemplateContext, TemplateResult
 
@@ -15,6 +15,7 @@ from .base_engine import ITemplateEngine, TemplateContext, TemplateResult
 @dataclass
 class CloudConfiguration:
     """Cloud-specific configuration parameters."""
+
     provider: str = "aws"
     region: str = "us-east-1"
     instance_type: str = "t3.medium"
@@ -25,30 +26,42 @@ class CloudConfiguration:
 class InfrastructureTemplateEngine(ITemplateEngine):
     """
     Specialized template engine for cloud infrastructure deployments.
-    
+
     Business Context: Handles Infrastructure as Code (IaC) patterns with focus on
     scalability, cost optimization, and multi-cloud deployments.
-    
+
     Why this approach: Single Responsibility - focuses only on infrastructure
     provisioning patterns while supporting multiple cloud providers.
     """
-    
+
     @property
     def engine_name(self) -> str:
         return "infrastructure"
-    
-    @property  
+
+    @property
     def supported_technologies(self) -> List[str]:
         return [
-            "terraform", "cloudformation", "aws", "azure", "gcp", "infrastructure",
-            "vpc", "ec2", "rds", "elb", "iam", "s3", "cloudwatch", "route53"
+            "terraform",
+            "cloudformation",
+            "aws",
+            "azure",
+            "gcp",
+            "infrastructure",
+            "vpc",
+            "ec2",
+            "rds",
+            "elb",
+            "iam",
+            "s3",
+            "cloudwatch",
+            "route53",
         ]
-    
+
     def __init__(self):
         self._logger = logging.getLogger(__name__)
         self._cloud_providers = self._initialize_cloud_providers()
         self._resource_templates = self._initialize_resource_templates()
-    
+
     def _initialize_cloud_providers(self) -> Dict[str, Dict]:
         """Initialize cloud provider configurations (≤15 lines)."""
         return {
@@ -57,24 +70,24 @@ class InfrastructureTemplateEngine(ITemplateEngine):
                 "database": "rds",
                 "storage": "s3",
                 "network": "vpc",
-                "monitoring": "cloudwatch"
+                "monitoring": "cloudwatch",
             },
             "azure": {
                 "compute": "virtual-machines",
                 "database": "sql-database",
-                "storage": "blob-storage", 
+                "storage": "blob-storage",
                 "network": "virtual-network",
-                "monitoring": "azure-monitor"
+                "monitoring": "azure-monitor",
             },
             "gcp": {
                 "compute": "compute-engine",
                 "database": "cloud-sql",
                 "storage": "cloud-storage",
                 "network": "vpc",
-                "monitoring": "cloud-monitoring"
-            }
+                "monitoring": "cloud-monitoring",
+            },
         }
-    
+
     def _initialize_resource_templates(self) -> Dict[str, Dict]:
         """Initialize infrastructure resource templates (≤15 lines)."""
         return {
@@ -82,70 +95,70 @@ class InfrastructureTemplateEngine(ITemplateEngine):
             "database": {"multi_az": True, "backup_retention": 7},
             "network": {"public_subnets": 2, "private_subnets": 2},
             "monitoring": {"retention_days": 30, "alerting": True},
-            "security": {"encryption": True, "access_logging": True}
+            "security": {"encryption": True, "access_logging": True},
         }
-    
+
     def can_handle(self, context: TemplateContext) -> bool:
         """
         Determine if this engine can handle the context.
-        
+
         Business Context: Focuses on infrastructure provisioning and
         cloud deployment scenarios.
         """
         tech_lower = context.technology.lower()
         task_lower = context.task_description.lower()
-        
+
         # Direct infrastructure technologies
         if any(tech in tech_lower for tech in ["terraform", "cloudformation", "infrastructure"]):
             return True
-        
+
         # Cloud provider preferences
-        cloud_provider = getattr(context.specific_options, 'cloud_provider', '')
+        cloud_provider = getattr(context.specific_options, "cloud_provider", "")
         if cloud_provider and cloud_provider.lower() in self._cloud_providers:
             return True
-        
+
         # Infrastructure-related keywords
         infra_keywords = ["provision", "deploy", "infrastructure", "cloud", "scale"]
         if any(keyword in task_lower for keyword in infra_keywords):
-            cluster_size = getattr(context.specific_options, 'cluster_size', 0)
+            cluster_size = getattr(context.specific_options, "cluster_size", 0)
             if cluster_size and cluster_size > 1:
                 return True
-        
+
         return False
-    
+
     def estimate_complexity(self, context: TemplateContext) -> str:
         """Estimate infrastructure complexity based on requirements."""
         tech_count = len(context.technology.split())
-        cluster_size = getattr(context.specific_options, 'cluster_size', 1)
-        ha_setup = getattr(context.specific_options, 'ha_setup', False)
-        monitoring = getattr(context.specific_options, 'monitoring_stack', [])
-        
+        cluster_size = getattr(context.specific_options, "cluster_size", 1)
+        ha_setup = getattr(context.specific_options, "ha_setup", False)
+        monitoring = getattr(context.specific_options, "monitoring_stack", [])
+
         complexity_score = tech_count + (cluster_size // 2)
         if ha_setup:
             complexity_score += 3
         if monitoring:
             complexity_score += len(monitoring)
-        
+
         if complexity_score >= 8:
             return "complex"
         elif complexity_score >= 4:
             return "moderate"
         else:
             return "simple"
-    
+
     async def generate_template(self, context: TemplateContext) -> TemplateResult:
         """
         Generate infrastructure template based on context.
-        
+
         Business Context: Main entry point that orchestrates infrastructure
         template generation based on cloud provider and deployment requirements.
         """
         self._logger.info(f"Generating Infrastructure template for: {context.technology}")
-        
+
         # Parse technologies and build configuration
         technologies = self._parse_technologies(context.technology)
         cloud_config = self._build_cloud_config(context)
-        
+
         # Generate appropriate template based on cloud provider
         if cloud_config.provider == "aws":
             template_content = self._generate_aws_template(technologies, context, cloud_config)
@@ -154,28 +167,30 @@ class InfrastructureTemplateEngine(ITemplateEngine):
         elif cloud_config.provider == "gcp":
             template_content = self._generate_gcp_template(technologies, context, cloud_config)
         else:
-            template_content = self._generate_terraform_template(technologies, context, cloud_config)
-        
-        from datetime import datetime
+            template_content = self._generate_terraform_template(
+                technologies, context, cloud_config
+            )
+
         import hashlib
-        
+        from datetime import datetime
+
         context_hash = hashlib.md5(
             f"{context.technology}_{context.task_description}_{cloud_config.provider}".encode()
         ).hexdigest()[:8]
-        
+
         return TemplateResult(
             content=template_content,
             template_type="infrastructure",
             confidence_score=0.85,
             estimated_complexity=self.estimate_complexity(context),
             generated_at=datetime.now(),
-            context_hash=context_hash
+            context_hash=context_hash,
         )
-    
+
     def _parse_technologies(self, tech_string: str) -> List[str]:
         """Parse and normalize technology names (≤10 lines)."""
         techs = [tech.strip().lower() for tech in tech_string.split()]
-        
+
         # Normalize cloud variations
         normalized = []
         for tech in techs:
@@ -187,32 +202,29 @@ class InfrastructureTemplateEngine(ITemplateEngine):
                 normalized.append("gcp")
             else:
                 normalized.append(tech)
-        
+
         return normalized
-    
+
     def _build_cloud_config(self, context: TemplateContext) -> CloudConfiguration:
         """Build cloud configuration from context (≤10 lines)."""
         specific_opts = context.specific_options
-        provider = getattr(specific_opts, 'cloud_provider', 'aws')
-        cluster_size = getattr(specific_opts, 'cluster_size', 2)
-        
+        provider = getattr(specific_opts, "cloud_provider", "aws")
+        cluster_size = getattr(specific_opts, "cluster_size", 2)
+
         return CloudConfiguration(
             provider=provider.lower(),
             region="us-east-1",
             instance_type="t3.medium",
             availability_zones=min(cluster_size, 3),
-            auto_scaling=cluster_size > 2
+            auto_scaling=cluster_size > 2,
         )
-    
+
     def _generate_aws_template(
-        self,
-        technologies: List[str],
-        context: TemplateContext,
-        cloud_config: CloudConfiguration
+        self, technologies: List[str], context: TemplateContext, cloud_config: CloudConfiguration
     ) -> str:
         """
         Generate AWS CloudFormation or Terraform template.
-        
+
         Business Context: Creates production-ready AWS infrastructure
         with security, scalability, and cost optimization in mind.
         """
@@ -220,16 +232,13 @@ class InfrastructureTemplateEngine(ITemplateEngine):
             return self._generate_aws_terraform(technologies, context, cloud_config)
         else:
             return self._generate_aws_cloudformation(technologies, context, cloud_config)
-    
+
     def _generate_aws_terraform(
-        self,
-        technologies: List[str],
-        context: TemplateContext,
-        cloud_config: CloudConfiguration
+        self, technologies: List[str], context: TemplateContext, cloud_config: CloudConfiguration
     ) -> str:
         """Generate AWS Terraform configuration (≤30 lines)."""
-        cluster_size = getattr(context.specific_options, 'cluster_size', 2)
-        
+        cluster_size = getattr(context.specific_options, "cluster_size", 2)
+
         return f"""# AWS Infrastructure for {context.technology}
 # Provider configuration
 terraform {{
@@ -419,16 +428,13 @@ output "vpc_id" {{
 }}
 
 {self._generate_terraform_deployment_instructions(context)}"""
-    
+
     def _generate_aws_cloudformation(
-        self,
-        technologies: List[str],
-        context: TemplateContext,
-        cloud_config: CloudConfiguration
+        self, technologies: List[str], context: TemplateContext, cloud_config: CloudConfiguration
     ) -> str:
         """Generate AWS CloudFormation template (≤20 lines)."""
-        cluster_size = getattr(context.specific_options, 'cluster_size', 2)
-        
+        cluster_size = getattr(context.specific_options, "cluster_size", 2)
+
         return f"""# AWS CloudFormation Template for {context.technology}
 AWSTemplateFormatVersion: '2010-09-09'
 Description: 'Infrastructure for {context.technology} deployment'
@@ -481,12 +487,9 @@ Outputs:
       Name: !Sub '${{AWS::StackName}}-VPC-ID'
 
 {self._generate_cloudformation_deployment_instructions(context)}"""
-    
+
     def _generate_azure_template(
-        self,
-        technologies: List[str],
-        context: TemplateContext,
-        cloud_config: CloudConfiguration
+        self, technologies: List[str], context: TemplateContext, cloud_config: CloudConfiguration
     ) -> str:
         """Generate Azure ARM template (≤20 lines)."""
         return f"""# Azure ARM Template for {context.technology}
@@ -538,12 +541,9 @@ Outputs:
 }}
 
 {self._generate_azure_deployment_instructions(context)}"""
-    
+
     def _generate_gcp_template(
-        self,
-        technologies: List[str],
-        context: TemplateContext,
-        cloud_config: CloudConfiguration
+        self, technologies: List[str], context: TemplateContext, cloud_config: CloudConfiguration
     ) -> str:
         """Generate GCP Deployment Manager template (≤20 lines)."""
         return f"""# GCP Deployment Manager Template for {context.technology}
@@ -585,12 +585,9 @@ resources:
         - type: ONE_TO_ONE_NAT
 
 {self._generate_gcp_deployment_instructions(context)}"""
-    
+
     def _generate_terraform_template(
-        self,
-        technologies: List[str],
-        context: TemplateContext,
-        cloud_config: CloudConfiguration
+        self, technologies: List[str], context: TemplateContext, cloud_config: CloudConfiguration
     ) -> str:
         """Generate generic Terraform template (≤15 lines)."""
         return f"""# Generic Terraform Template for {context.technology}
@@ -612,7 +609,7 @@ provider "{cloud_config.provider}" {{
 # Add specific resources based on requirements
 
 {self._generate_terraform_deployment_instructions(context)}"""
-    
+
     def _generate_terraform_deployment_instructions(self, context: TemplateContext) -> str:
         """Generate Terraform deployment instructions (≤15 lines)."""
         return """## TERRAFORM DEPLOYMENT INSTRUCTIONS
@@ -634,7 +631,7 @@ terraform output
 # Cleanup (when needed)
 terraform destroy
 ```"""
-    
+
     def _generate_cloudformation_deployment_instructions(self, context: TemplateContext) -> str:
         """Generate CloudFormation deployment instructions (≤10 lines)."""
         return """## CLOUDFORMATION DEPLOYMENT INSTRUCTIONS
@@ -648,7 +645,7 @@ aws cloudformation create-stack \\
 # Check stack status
 aws cloudformation describe-stacks --stack-name monitoring-infrastructure
 ```"""
-    
+
     def _generate_azure_deployment_instructions(self, context: TemplateContext) -> str:
         """Generate Azure deployment instructions (≤10 lines)."""
         return """## AZURE DEPLOYMENT INSTRUCTIONS
@@ -662,7 +659,7 @@ az deployment group create \\
   --resource-group monitoring-rg \\
   --template-file template.json
 ```"""
-    
+
     def _generate_gcp_deployment_instructions(self, context: TemplateContext) -> str:
         """Generate GCP deployment instructions (≤10 lines)."""
         return """## GCP DEPLOYMENT INSTRUCTIONS

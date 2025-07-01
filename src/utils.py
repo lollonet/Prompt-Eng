@@ -1,11 +1,12 @@
 import json
-import os
 import logging
+import os
 from typing import Any, Dict
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
+
 
 def safe_path_join(base_dir: str, *paths: str) -> str:
     """
@@ -31,6 +32,7 @@ def safe_path_join(base_dir: str, *paths: str) -> str:
 
     return absolute_path
 
+
 def load_json_file(filepath: str) -> Dict[str, Any]:
     """
     Loads and parses a JSON file from the given filepath.
@@ -47,7 +49,7 @@ def load_json_file(filepath: str) -> Dict[str, Any]:
         IOError: For other I/O related errors.
     """
     try:
-        with open(filepath, 'r', encoding='utf-8') as f:
+        with open(filepath, "r", encoding="utf-8") as f:
             data = json.load(f)
         logger.info(f"Successfully loaded JSON from: {filepath}")
         return data
@@ -60,6 +62,7 @@ def load_json_file(filepath: str) -> Dict[str, Any]:
     except IOError as e:
         logger.error(f"Error reading file {filepath}: {e}")
         raise
+
 
 def read_text_file(filepath: str) -> str:
     """
@@ -76,7 +79,7 @@ def read_text_file(filepath: str) -> str:
         IOError: For other I/O related errors.
     """
     try:
-        with open(filepath, 'r', encoding='utf-8') as f:
+        with open(filepath, "r", encoding="utf-8") as f:
             content = f.read()
         logger.info(f"Successfully read text from: {filepath}")
         return content
