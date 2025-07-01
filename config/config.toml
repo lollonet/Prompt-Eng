@@ -84,6 +84,16 @@ health_check_interval_seconds = 30
 metrics_collection = true
 alert_thresholds = { error_rate = 0.05, response_time_ms = 2000 }
 
+[recursive_generation]
+# Recursive prompt generation settings
+max_recursion_depth = 3
+enable_parallel_processing = true
+min_subtask_complexity = 0.3
+composition_strategy = "dependency_aware"
+enable_integration_validation = true
+decomposition_timeout_seconds = 30
+max_subtasks_per_level = 10
+
 [development]
 # Development and testing settings
 debug_mode = false
