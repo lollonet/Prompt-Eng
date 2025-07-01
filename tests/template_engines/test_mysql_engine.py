@@ -9,11 +9,11 @@ import logging
 from pathlib import Path
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from web_research.template_engines.mysql_engine import MySQLTemplateEngine
-from web_research.template_engines.base_engine import TemplateContext
-from prompt_config import SpecificOptions
+from src.web_research.template_engines.mysql_engine import MySQLTemplateEngine
+from src.web_research.template_engines.base_engine import TemplateContext
+from src.prompt_config import SpecificOptions
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)

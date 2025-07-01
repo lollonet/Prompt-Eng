@@ -10,7 +10,7 @@ hidden exceptions, and events enable observability and loose coupling.
 
 import asyncio
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 from pathlib import Path
 from uuid import uuid4
 
