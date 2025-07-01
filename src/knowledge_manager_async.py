@@ -74,7 +74,7 @@ class AsyncKnowledgeManager(KnowledgeSource):
         logger.info(f"Initialized AsyncKnowledgeManager with config: {config}")
     
     @monitor_performance("load_tech_stack_mapping")
-    async def _load_tech_stack_mapping(self) -> Result[Dict[str, TechnologyMapping], KnowledgeError]:
+    async def _load_tech_stack_mapping(self) -> Union[Success[Dict[str, TechnologyMapping]], Error[KnowledgeError]]:
         """
         Async load of technology stack mapping with Result error handling.
         
@@ -106,7 +106,7 @@ class AsyncKnowledgeManager(KnowledgeSource):
             logger.info(f"Loaded {len(data)} technology mappings")
             return Success(data)
     
-    async def get_best_practices(self, technology: TechnologyName) -> Result[List[BestPracticeName], KnowledgeError]:
+    async def get_best_practices(self, technology: TechnologyName) -> Union[Success[List[BestPracticeName]], Error[KnowledgeError]]:
         """
         Get best practice names for a technology.
         
@@ -148,7 +148,7 @@ class AsyncKnowledgeManager(KnowledgeSource):
             
             return Success(typed_names)
     
-    async def get_tools(self, technology: TechnologyName) -> Result[List[ToolName], KnowledgeError]:
+    async def get_tools(self, technology: TechnologyName) -> Union[Success[List[ToolName]], Error[KnowledgeError]]:
         """
         Get tool names for a technology.
         
@@ -179,7 +179,7 @@ class AsyncKnowledgeManager(KnowledgeSource):
             return Success(typed_names)
     
     @monitor_performance("get_best_practice_details")
-    async def get_best_practice_details(self, name: BestPracticeName) -> Result[str, KnowledgeError]:
+    async def get_best_practice_details(self, name: BestPracticeName) -> Union[Success[str], Error[KnowledgeError]]:
         """
         Get detailed content for a best practice.
         
@@ -225,7 +225,7 @@ class AsyncKnowledgeManager(KnowledgeSource):
             return result  # Pass through the error
     
     @monitor_performance("get_tool_details")
-    async def get_tool_details(self, name: ToolName) -> Result[ToolDetails, KnowledgeError]:
+    async def get_tool_details(self, name: ToolName) -> Union[Success[ToolDetails], Error[KnowledgeError]]:
         """
         Get detailed information for a tool.
         
@@ -288,7 +288,7 @@ class AsyncKnowledgeManager(KnowledgeSource):
         
         logger.info("Cleared knowledge manager cache")
     
-    async def preload_data(self, technologies: List[TechnologyName]) -> Result[None, KnowledgeError]:
+    async def preload_data(self, technologies: List[TechnologyName]) -> Union[Success[None], Error[KnowledgeError]]:
         """
         Preload data for specified technologies to improve performance.
         
@@ -334,7 +334,7 @@ class AsyncKnowledgeManager(KnowledgeSource):
                 details=str(e)
             ))
     
-    async def health_check(self) -> Result[Dict[str, any], KnowledgeError]:
+    async def health_check(self) -> Union[Success[Dict[str, Any]], Error[KnowledgeError]]:
         """
         Perform health check on the knowledge manager.
         

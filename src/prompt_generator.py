@@ -132,6 +132,15 @@ class PromptGenerator:
             self.knowledge_manager.get_tool_details
         )
         
+        # Create practice details dictionary for template compatibility
+        practice_details = {}
+        for practice in tech_data['best_practices']:
+            details = self.knowledge_manager.get_best_practice_details(practice)
+            if details:
+                practice_details[practice] = details
+            else:
+                practice_details[practice] = f'Apply enterprise {practice} standards'
+        
         return {
             'technologies': config.technologies,
             'technologies_list': ", ".join(config.technologies),
@@ -144,7 +153,8 @@ class PromptGenerator:
             # Structured data for advanced templates
             'best_practices_list': tech_data['best_practices'][:3],
             'tools_list': tech_data['tools'][:3],
-            'primary_tech': config.technologies[0] if config.technologies else 'development'
+            'primary_tech': config.technologies[0] if config.technologies else 'development',
+            'practice_details': practice_details
         }
     
     def _render_template(self, template_name: str, context: Dict[str, Any]) -> str:
