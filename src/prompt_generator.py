@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import Any, Callable, Dict, List, Optional
 
@@ -24,6 +25,10 @@ class PromptGenerator:
             config_path: The absolute path to the tech_stack_mapping.json file.
         """
         self.env = Environment(loader=FileSystemLoader(prompts_dir))
+        
+        # Add custom Jinja2 filters
+        self.env.filters['tojsonpretty'] = lambda obj: json.dumps(obj, indent=2)
+        
         self.knowledge_manager = KnowledgeManager(config_path)
 
     def generate_prompt(self, config: PromptConfig) -> str:
@@ -124,25 +129,43 @@ class PromptGenerator:
         Returns:
             Dictionary containing all template variables.
         """
-        # Format best practices
+        # Format best practices with defensive programming
+        best_practices_data = tech_data.get("best_practices", [])
+        if isinstance(best_practices_data, str):
+            best_practices_data = [best_practices_data]
+        
         detailed_best_practices = self._format_knowledge_items(
-            tech_data["best_practices"], self.knowledge_manager.get_best_practice_details
+            best_practices_data, self.knowledge_manager.get_best_practice_details
         )
 
-        # Format tools
+        # Format tools with defensive programming  
+        tools_data = tech_data.get("tools", [])
+        if isinstance(tools_data, str):
+            tools_data = [tools_data]
+            
         detailed_tools = self._format_knowledge_items(
-            tech_data["tools"], self.knowledge_manager.get_tool_details
+            tools_data, self.knowledge_manager.get_tool_details
         )
 
         # Create practice details dictionary for template compatibility
         practice_details = {}
-        for practice in tech_data["best_practices"]:
+        for practice in best_practices_data:
             details = self.knowledge_manager.get_best_practice_details(practice)
             if details:
                 practice_details[practice] = details
             else:
                 practice_details[practice] = f"Apply enterprise {practice} standards"
 
+        # Ensure we have lists for slicing operations
+        best_practices_list = tech_data.get("best_practices", [])
+        tools_list = tech_data.get("tools", [])
+        
+        # Defensive programming: ensure we have lists, not strings
+        if isinstance(best_practices_list, str):
+            best_practices_list = [best_practices_list]
+        if isinstance(tools_list, str):
+            tools_list = [tools_list]
+        
         return {
             "technologies": config.technologies,
             "technologies_list": ", ".join(config.technologies),
@@ -153,8 +176,8 @@ class PromptGenerator:
             "code_requirements": config.code_requirements,
             "role": "developer",
             # Structured data for advanced templates
-            "best_practices_list": tech_data["best_practices"][:3],
-            "tools_list": tech_data["tools"][:3],
+            "best_practices_list": best_practices_list[:3],
+            "tools_list": tools_list[:3],
             "primary_tech": config.technologies[0] if config.technologies else "development",
             "practice_details": practice_details,
         }

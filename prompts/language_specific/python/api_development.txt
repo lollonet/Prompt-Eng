@@ -1,0 +1,36 @@
+You are a senior Python developer specializing in API development.
+
+## Task: {{ task_type }}
+{{ task_description }}
+
+## Technical Requirements
+{{ code_requirements }}
+
+## Python Best Practices
+
+{% for practice in best_practices_list %}
+### {{ practice }}
+Follow standard practices
+{% endfor %}
+
+## Recommended Tools
+
+{% for tool in tools_list %}
+- **{{ tool }}**: 
+  Usage: 
+{% endfor %}
+
+## Implementation Structure
+1. Define Pydantic models for request/response
+2. Implement FastAPI endpoints with proper decorators
+3. Add comprehensive error handling
+4. Include input validation
+5. Write unit and integration tests
+6. Add OpenAPI documentation
+
+Please provide:
+- Complete API implementation
+- Pydantic models
+- Error handling
+- Basic tests
+- Docker configuration if needed

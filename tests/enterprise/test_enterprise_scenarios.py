@@ -755,7 +755,7 @@ Implement following enterprise standards for security, scalability, and maintain
 
         env = enterprise_setup
         generator = PromptGenerator(
-            env["prompts_dir"], env["config_file"], base_path=env["base_path"]
+            env["prompts_dir"], env["config_file"]
         )
 
         config = PromptConfig(
@@ -800,7 +800,7 @@ Implement following enterprise standards for security, scalability, and maintain
 
         env = enterprise_setup
         generator = PromptGenerator(
-            env["prompts_dir"], env["config_file"], base_path=env["base_path"]
+            env["prompts_dir"], env["config_file"]
         )
 
         config = PromptConfig(
@@ -841,7 +841,7 @@ Implement following enterprise standards for security, scalability, and maintain
 
         env = enterprise_setup
         generator = PromptGenerator(
-            env["prompts_dir"], env["config_file"], base_path=env["base_path"]
+            env["prompts_dir"], env["config_file"]
         )
 
         config = PromptConfig(
@@ -881,7 +881,7 @@ Implement following enterprise standards for security, scalability, and maintain
 
         env = enterprise_setup
         generator = PromptGenerator(
-            env["prompts_dir"], env["config_file"], base_path=env["base_path"]
+            env["prompts_dir"], env["config_file"]
         )
 
         config = PromptConfig(
@@ -922,7 +922,7 @@ Implement following enterprise standards for security, scalability, and maintain
 
         env = enterprise_setup
         generator = PromptGenerator(
-            env["prompts_dir"], env["config_file"], base_path=env["base_path"]
+            env["prompts_dir"], env["config_file"]
         )
 
         config = PromptConfig(
@@ -965,7 +965,7 @@ class TestEnterprisePerformanceScenarios:
 
         env = enterprise_setup
         generator = PromptGenerator(
-            env["prompts_dir"], env["config_file"], base_path=env["base_path"]
+            env["prompts_dir"], env["config_file"]
         )
 
         # Simulate multiple concurrent enterprise requests
@@ -1063,7 +1063,7 @@ class TestEnterpriseSecurityCompliance:
 
         env = enterprise_setup
         generator = PromptGenerator(
-            env["prompts_dir"], env["config_file"], base_path=env["base_path"]
+            env["prompts_dir"], env["config_file"]
         )
 
         compliance_scenarios = [
