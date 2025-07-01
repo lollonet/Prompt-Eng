@@ -509,7 +509,7 @@ class TestRecursivePromptGenerator:
             result = await recursive_generator.generate_recursive_prompt(complex_task)
             
             assert result.is_error()
-            assert "Decomposition failed" in result.unwrap_error()
+            assert "Decomposition failed" in str(result.error)
 
     @pytest.mark.asyncio
     async def test_generate_recursive_prompt_composition_error(self, recursive_generator, complex_task):
