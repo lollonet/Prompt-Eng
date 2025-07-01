@@ -26,5 +26,25 @@
     "ansible": {
         "best_practices": ["Ansible Best Practices", "Infrastructure as Code Principles"],
         "tools": ["Ansible"]
+    },
+    "mysql": {
+        "best_practices": ["MySQL Performance Optimization", "Database Security", "Backup and Recovery"],
+        "tools": ["MySQL", "MySQL Workbench", "Percona Toolkit"]
+    },
+    "mariadb": {
+        "best_practices": ["MariaDB Best Practices", "High Availability Setup", "Performance Tuning"],
+        "tools": ["MariaDB", "MariaDB MaxScale", "Galera Cluster"]
+    },
+    "galera": {
+        "best_practices": ["Galera Cluster Management", "Multi-Master Replication", "Split-Brain Prevention"],
+        "tools": ["Galera Cluster", "MariaDB MaxScale", "HAProxy"]
+    },
+    "mysql-cluster": {
+        "best_practices": ["MySQL NDB Cluster", "Distributed Computing", "High Availability"],
+        "tools": ["MySQL NDB", "MySQL Router", "MySQL Shell"]
+    },
+    "proxysql": {
+        "best_practices": ["Connection Pooling", "Load Balancing", "Query Routing"],
+        "tools": ["ProxySQL", "MySQL Router", "HAProxy"]
     }
 }

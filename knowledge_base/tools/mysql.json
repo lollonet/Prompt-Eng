@@ -1,0 +1,23 @@
+{
+  "name": "MySQL",
+  "description": "Open-source relational database management system",
+  "benefits": [
+    "High performance and reliability",
+    "ACID compliance",
+    "Extensive ecosystem and tools",
+    "Strong community support"
+  ],
+  "usage_notes": [
+    "Choose appropriate storage engine (InnoDB vs MyISAM)",
+    "Configure buffer pool size based on available memory",
+    "Implement proper backup and recovery procedures",
+    "Monitor performance with Performance Schema"
+  ],
+  "example_command": "mysql -u root -p -h localhost",
+  "enterprise_features": [
+    "MySQL Enterprise Backup",
+    "MySQL Router for load balancing",
+    "MySQL Shell for administration",
+    "Advanced monitoring and security"
+  ]
+}

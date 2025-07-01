@@ -1,0 +1,23 @@
+{
+  "name": "ProxySQL",
+  "description": "High-performance MySQL proxy with advanced routing capabilities",
+  "benefits": [
+    "Intelligent query routing",
+    "Connection pooling and multiplexing",
+    "Real-time configuration changes",
+    "Advanced monitoring and statistics"
+  ],
+  "usage_notes": [
+    "Configure read/write split for better performance",
+    "Use query rules for intelligent routing",
+    "Monitor connection pool efficiency",
+    "Implement proper failover logic"
+  ],
+  "example_command": "proxysql -f -D /etc/proxysql-datadir",
+  "enterprise_features": [
+    "Advanced load balancing algorithms",
+    "Query caching and filtering",
+    "Real-time monitoring dashboard",
+    "Integration with clustering solutions"
+  ]
+}
