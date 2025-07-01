@@ -1,0 +1,23 @@
+{
+  "name": "MariaDB",
+  "description": "Enhanced MySQL-compatible database with advanced features",
+  "benefits": [
+    "Better performance than MySQL",
+    "Advanced storage engines (Aria, TokuDB)",
+    "Built-in clustering with Galera",
+    "Enhanced security features"
+  ],
+  "usage_notes": [
+    "Drop-in replacement for MySQL",
+    "Use Galera for multi-master clustering",
+    "Configure MaxScale for connection routing",
+    "Leverage MariaDB-specific optimizations"
+  ],
+  "example_command": "mariadb -u root -p",
+  "enterprise_features": [
+    "MariaDB MaxScale proxy",
+    "Galera Cluster built-in",
+    "Enhanced monitoring capabilities",
+    "Advanced security and encryption"
+  ]
+}

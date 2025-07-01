@@ -12,6 +12,7 @@ from .base_engine import ITemplateEngine, TemplateContext, TemplateResult
 from .patroni_engine import PatroniTemplateEngine
 from .docker_engine import DockerTemplateEngine
 from .ansible_engine import AnsibleTemplateEngine
+from .mysql_engine import MySQLTemplateEngine
 
 
 class TemplateEngineFactory:
@@ -33,6 +34,7 @@ class TemplateEngineFactory:
             self.register_engine(PatroniTemplateEngine())
             self.register_engine(DockerTemplateEngine())
             self.register_engine(AnsibleTemplateEngine())
+            self.register_engine(MySQLTemplateEngine())
             
             # TODO: Register other engines as they're implemented
             # self.register_engine(KubernetesTemplateEngine())

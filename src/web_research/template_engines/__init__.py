@@ -10,6 +10,7 @@ from .base_engine import ITemplateEngine, TemplateContext, TemplateResult
 from .patroni_engine import PatroniTemplateEngine
 from .docker_engine import DockerTemplateEngine
 from .ansible_engine import AnsibleTemplateEngine
+from .mysql_engine import MySQLTemplateEngine
 from .template_factory import TemplateEngineFactory
 
 # TODO: Import remaining engines when implemented
@@ -23,5 +24,6 @@ __all__ = [
     'PatroniTemplateEngine',
     'DockerTemplateEngine',
     'AnsibleTemplateEngine',
+    'MySQLTemplateEngine',
     'TemplateEngineFactory'
 ]

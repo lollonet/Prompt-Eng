@@ -1,0 +1,23 @@
+{
+  "name": "Galera Cluster",
+  "description": "Synchronous multi-master cluster for MySQL/MariaDB",
+  "benefits": [
+    "True multi-master replication",
+    "Automatic node provisioning",
+    "No slave lag or data loss",
+    "Transparent failover"
+  ],
+  "usage_notes": [
+    "Requires minimum 3 nodes for quorum",
+    "All nodes must be in same datacenter for best performance",
+    "Configure proper network settings",
+    "Monitor cluster health continuously"
+  ],
+  "example_command": "systemctl start mysql && mysql -e 'SHOW STATUS LIKE \"wsrep%\"'",
+  "enterprise_features": [
+    "Synchronous replication",
+    "Automatic node recovery",
+    "Load balancing capabilities",
+    "Zero-downtime maintenance"
+  ]
+}
