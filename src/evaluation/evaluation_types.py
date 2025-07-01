@@ -6,13 +6,14 @@ different evaluation modules for consistency and type safety.
 """
 
 from dataclasses import dataclass, field
-from typing import List, Dict, Any, Optional
-from enum import Enum
 from datetime import datetime
+from enum import Enum
+from typing import Any, Dict, List, Optional
 
 
 class RiskLevel(Enum):
     """Risk levels for security and compliance issues"""
+
     CRITICAL = "critical"
     HIGH = "high"
     MEDIUM = "medium"
@@ -22,6 +23,7 @@ class RiskLevel(Enum):
 
 class ComplianceStandard(Enum):
     """Supported compliance standards"""
+
     SOX = "sox"
     PCI_DSS = "pci_dss"
     HIPAA = "hipaa"
@@ -32,6 +34,7 @@ class ComplianceStandard(Enum):
 
 class TemplateType(Enum):
     """Types of infrastructure templates"""
+
     DOCKER_COMPOSE = "docker_compose"
     ANSIBLE_PLAYBOOK = "ansible_playbook"
     KUBERNETES_MANIFEST = "kubernetes_manifest"
@@ -42,6 +45,7 @@ class TemplateType(Enum):
 @dataclass
 class EvalContext:
     """Context for template evaluation"""
+
     template_type: TemplateType
     target_environment: str  # rhel9, ubuntu22, k8s-1.28, etc.
     technology_stack: List[str]
@@ -54,6 +58,7 @@ class EvalContext:
 @dataclass
 class Issue:
     """Represents an issue found during evaluation"""
+
     category: str
     severity: RiskLevel
     title: str
@@ -67,6 +72,7 @@ class Issue:
 @dataclass
 class Recommendation:
     """Improvement recommendation"""
+
     category: str
     priority: str  # immediate, high, medium, low
     title: str
@@ -79,6 +85,7 @@ class Recommendation:
 @dataclass
 class EvaluationMetrics:
     """Common evaluation metrics"""
+
     score: float  # 0.0 - 1.0
     max_score: float = 1.0
     issues: List[Issue] = field(default_factory=list)
@@ -89,35 +96,31 @@ class EvaluationMetrics:
 @dataclass
 class EvaluationResult:
     """Base class for all evaluation results"""
+
     overall_score: float
     evaluation_time: datetime
     context: EvalContext
     metrics: Dict[str, EvaluationMetrics]
     summary: str
-    
+
     def get_critical_issues(self) -> List[Issue]:
         """Get all critical issues across all metrics"""
         critical_issues = []
         for metric in self.metrics.values():
-            critical_issues.extend([
-                issue for issue in metric.issues 
-                if issue.severity == RiskLevel.CRITICAL
-            ])
+            critical_issues.extend(
+                [issue for issue in metric.issues if issue.severity == RiskLevel.CRITICAL]
+            )
         return critical_issues
-    
+
     def get_high_priority_recommendations(self) -> List[Recommendation]:
         """Get high priority recommendations"""
         high_priority = []
         for metric in self.metrics.values():
-            high_priority.extend([
-                rec for rec in metric.recommendations
-                if rec.priority in ["immediate", "high"]
-            ])
+            high_priority.extend(
+                [rec for rec in metric.recommendations if rec.priority in ["immediate", "high"]]
+            )
         return high_priority
-    
+
     def is_production_ready(self, threshold: float = 0.7) -> bool:
         """Determine if template meets production readiness threshold"""
-        return (
-            self.overall_score >= threshold and
-            len(self.get_critical_issues()) == 0
-        )
+        return self.overall_score >= threshold and len(self.get_critical_issues()) == 0

@@ -6,16 +6,17 @@ including Galera clusters, replication setups, and ProxySQL load balancing.
 """
 
 import asyncio
-from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
+from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 from .base_engine import BaseTemplateEngine, TemplateContext, TemplateResult
-from datetime import datetime
 
 
 @dataclass
 class MySQLClusterConfig:
     """Configuration for MySQL/MariaDB cluster setup."""
+
     cluster_type: str  # galera, replication, ndb
     node_count: int = 3
     engine_type: str = "mariadb"  # mysql, mariadb
@@ -28,60 +29,69 @@ class MySQLClusterConfig:
 class MySQLTemplateEngine(BaseTemplateEngine):
     """
     Template engine for MySQL/MariaDB high-availability setups.
-    
+
     Supports:
     - Galera clusters (MariaDB/MySQL)
     - Master-slave replication
     - MySQL NDB Cluster
     - ProxySQL and MaxScale integration
     """
-    
+
     def __init__(self):
         super().__init__(
             name="mysql",
-            technologies=["mysql", "mariadb", "galera", "mysql-cluster", "proxysql", "maxscale"]
+            technologies=["mysql", "mariadb", "galera", "mysql-cluster", "proxysql", "maxscale"],
         )
-    
+
     def can_handle(self, context: TemplateContext) -> bool:
         """Check if this engine can handle the context."""
         mysql_technologies = {
-            'mysql', 'mariadb', 'galera', 'mysql-cluster', 
-            'proxysql', 'maxscale', 'mysql-replication'
+            "mysql",
+            "mariadb",
+            "galera",
+            "mysql-cluster",
+            "proxysql",
+            "maxscale",
+            "mysql-replication",
         }
-        
+
         # Handle both string and list technology inputs
         if isinstance(context.technology, str):
             context_technologies = {context.technology.lower()}
         else:
             context_technologies = {tech.lower() for tech in context.technology}
-        
+
         return bool(mysql_technologies.intersection(context_technologies))
-    
+
     async def generate_template(self, context: TemplateContext) -> TemplateResult:
         """Generate MySQL/MariaDB cluster template."""
         try:
             # Determine cluster configuration from context
             cluster_config = self._determine_cluster_config(context)
-            
+
             # Generate appropriate template based on setup type
             if cluster_config.cluster_type == "galera":
                 template_content = await self._generate_galera_template(context, cluster_config)
             elif cluster_config.cluster_type == "replication":
-                template_content = await self._generate_replication_template(context, cluster_config)
+                template_content = await self._generate_replication_template(
+                    context, cluster_config
+                )
             elif cluster_config.cluster_type == "ndb":
                 template_content = await self._generate_ndb_template(context, cluster_config)
             else:
-                template_content = await self._generate_single_instance_template(context, cluster_config)
-            
+                template_content = await self._generate_single_instance_template(
+                    context, cluster_config
+                )
+
             return TemplateResult(
                 content=template_content,
                 template_type=f"mysql_{cluster_config.cluster_type}",
                 confidence_score=0.85,
                 estimated_complexity=self.estimate_complexity(context),
                 generated_at=datetime.now(),
-                context_hash=self._calculate_context_hash(context)
+                context_hash=self._calculate_context_hash(context),
             )
-            
+
         except Exception as e:
             return TemplateResult(
                 content=self._generate_fallback_template(context),
@@ -89,9 +99,9 @@ class MySQLTemplateEngine(BaseTemplateEngine):
                 confidence_score=0.4,
                 estimated_complexity="simple",
                 generated_at=datetime.now(),
-                context_hash=self._calculate_context_hash(context)
+                context_hash=self._calculate_context_hash(context),
             )
-    
+
     def _determine_cluster_config(self, context: TemplateContext) -> MySQLClusterConfig:
         """Determine cluster configuration from context."""
         # Handle both string and list technology inputs
@@ -99,44 +109,50 @@ class MySQLTemplateEngine(BaseTemplateEngine):
             technologies = [context.technology.lower()]
         else:
             technologies = [tech.lower() for tech in context.technology]
-        
+
         # Determine cluster type
-        if 'galera' in technologies:
+        if "galera" in technologies:
             cluster_type = "galera"
             engine_type = "mariadb"
-        elif 'mysql-cluster' in technologies or 'ndb' in technologies:
+        elif "mysql-cluster" in technologies or "ndb" in technologies:
             cluster_type = "ndb"
             engine_type = "mysql"
-        elif 'replication' in context.task_description.lower():
+        elif "replication" in context.task_description.lower():
             cluster_type = "replication"
         else:
             cluster_type = "galera"  # Default for HA
-        
+
         # Determine engine type
-        if 'mysql' in technologies and 'mariadb' not in technologies:
+        if "mysql" in technologies and "mariadb" not in technologies:
             engine_type = "mysql"
         else:
             engine_type = "mariadb"  # Default to MariaDB for better features
-        
+
         # Determine node count from context
         node_count = 3  # Default
-        if hasattr(context.specific_options, 'cluster_size') and context.specific_options.cluster_size:
+        if (
+            hasattr(context.specific_options, "cluster_size")
+            and context.specific_options.cluster_size
+        ):
             node_count = context.specific_options.cluster_size
-        elif 'cluster' in context.task_description.lower():
+        elif "cluster" in context.task_description.lower():
             # Try to extract number from description
             import re
-            match = re.search(r'(\d+)[- ]node', context.task_description.lower())
+
+            match = re.search(r"(\d+)[- ]node", context.task_description.lower())
             if match:
                 node_count = int(match.group(1))
-        
+
         return MySQLClusterConfig(
             cluster_type=cluster_type,
             node_count=node_count,
             engine_type=engine_type,
-            enable_proxy='proxy' in context.task_description.lower() or len(technologies) > 2
+            enable_proxy="proxy" in context.task_description.lower() or len(technologies) > 2,
         )
-    
-    async def _generate_galera_template(self, context: TemplateContext, config: MySQLClusterConfig) -> str:
+
+    async def _generate_galera_template(
+        self, context: TemplateContext, config: MySQLClusterConfig
+    ) -> str:
         """Generate Galera cluster template."""
         return f"""# {config.engine_type.title()} Galera Cluster Setup
 
@@ -433,8 +449,10 @@ docker exec galera-node-1 mariabackup --copy-back --target-dir=/backup
 ```
 
 Deploy this {config.engine_type.title()} Galera cluster ensuring high availability, security, and monitoring capabilities."""
-    
-    async def _generate_replication_template(self, context: TemplateContext, config: MySQLClusterConfig) -> str:
+
+    async def _generate_replication_template(
+        self, context: TemplateContext, config: MySQLClusterConfig
+    ) -> str:
         """Generate MySQL replication template."""
         return f"""# {config.engine_type.title()} Master-Slave Replication Setup
 
@@ -503,7 +521,9 @@ networks:
 
 Deploy this {config.engine_type.title()} replication setup with automated failover capabilities."""
 
-    async def _generate_ndb_template(self, context: TemplateContext, config: MySQLClusterConfig) -> str:
+    async def _generate_ndb_template(
+        self, context: TemplateContext, config: MySQLClusterConfig
+    ) -> str:
         """Generate MySQL NDB Cluster template."""
         return f"""# MySQL NDB Cluster Setup
 
@@ -571,7 +591,9 @@ networks:
 
 Deploy this MySQL NDB Cluster for distributed computing and high availability."""
 
-    async def _generate_single_instance_template(self, context: TemplateContext, config: MySQLClusterConfig) -> str:
+    async def _generate_single_instance_template(
+        self, context: TemplateContext, config: MySQLClusterConfig
+    ) -> str:
         """Generate single MySQL instance template."""
         return f"""# {config.engine_type.title()} Single Instance Setup
 
@@ -613,7 +635,7 @@ networks:
 {context.user_requirements or 'Follow best practices and write clean, maintainable code'}
 
 Deploy this {config.engine_type.title()} instance with proper security and backup procedures."""
-    
+
     def _generate_fallback_template(self, context: TemplateContext) -> str:
         """Generate fallback template for MySQL/MariaDB."""
         return f"""# MySQL/MariaDB Database Setup

@@ -1,15 +1,18 @@
-import os
 import logging
+import os
 from typing import Any, Dict, List, Optional
+
 from src.utils import load_json_file, read_text_file, safe_path_join
 
 logger = logging.getLogger(__name__)
+
 
 class KnowledgeManager:
     """
     Manages the loading and retrieval of best practices and tool information
     from the knowledge base. Implements caching for efficiency and uses safe path handling.
     """
+
     def __init__(self, config_path: str, base_path: Optional[str] = None):
         """
         Initializes the KnowledgeManager with the path to the tech stack mapping configuration.
@@ -21,7 +24,9 @@ class KnowledgeManager:
         self.config_path = config_path
         self.tech_stack_mapping: Dict[str, Any] = self._load_tech_stack_mapping()
         # Determine the root of the knowledge base relative to the config file
-        self.knowledge_base_root: str = base_path if base_path else os.path.dirname(os.path.dirname(config_path))
+        self.knowledge_base_root: str = (
+            base_path if base_path else os.path.dirname(os.path.dirname(config_path))
+        )
         self._cache: Dict[str, Any] = {}
 
     def _load_tech_stack_mapping(self) -> Dict[str, Any]:
@@ -75,7 +80,9 @@ class KnowledgeManager:
         """
         # Normalize name to match filename convention (lowercase, underscores)
         filename = f"{bp_name.lower().replace(' ', '_')}.md"
-        filepath = safe_path_join(self.knowledge_base_root, "knowledge_base", "best_practices", filename)
+        filepath = safe_path_join(
+            self.knowledge_base_root, "knowledge_base", "best_practices", filename
+        )
 
         if filepath in self._cache:
             return self._cache[filepath]
@@ -85,7 +92,9 @@ class KnowledgeManager:
             self._cache[filepath] = content
             return content
         except (FileNotFoundError, ValueError, IOError) as e:
-            logger.warning(f"Could not load best practice details for '{bp_name}' from {filepath}: {e}")
+            logger.warning(
+                f"Could not load best practice details for '{bp_name}' from {filepath}: {e}"
+            )
             return None
 
     def get_tool_details(self, tool_name: str) -> Optional[Dict[str, Any]]:

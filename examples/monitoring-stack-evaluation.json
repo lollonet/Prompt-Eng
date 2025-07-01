@@ -1,0 +1,30 @@
+{
+  "evaluation_prompt": "# PROMPT EVALUATION FRAMEWORK\n\n## EVALUATION OBJECTIVE\nYou are an expert evaluator specializing in infrastructure assessment. Your task is to evaluate the given prompt based on enterprise-grade infrastructure standards.\n\n## EVALUATION CRITERIA\n### INFRASTRUCTURE EVALUATION CRITERIA\n\n**Deployment Automation** (Weight: 25%)\n- Evaluate deployment automation implementation\n- Consider enterprise best practices\n\n**Configuration Management** (Weight: 20%)\n- Evaluate configuration management implementation\n- Consider enterprise best practices\n\n**Monitoring Setup** (Weight: 20%)\n- Evaluate monitoring setup implementation\n- Consider enterprise best practices\n\n**Security Hardening** (Weight: 15%)\n- Evaluate security hardening implementation\n- Consider enterprise best practices\n\n**Backup Strategy** (Weight: 10%)\n- Evaluate backup strategy implementation\n- Consider enterprise best practices\n\n**Disaster Recovery** (Weight: 10%)\n- Evaluate disaster recovery implementation\n- Consider enterprise best practices\n\n\n## SCORING METHODOLOGY\n- Score each criterion from 0.0 to 1.0\n- Provide specific evidence for each score\n- Calculate weighted overall score\n- Minimum acceptable threshold: 0.7\n\n## EVALUATION TARGET\n**Technologies:** docker-compose, prometheus, grafana, victoriametrics, alertmanager, nginx\n**Domain Focus:** infrastructure\n\n## PROMPT TO EVALUATE\n```\nGenerate a complete Docker Compose monitoring stack configuration with:\n\n- Prometheus for metrics collection\n- Grafana for visualization with LDAP authentication  \n- VictoriaMetrics for high-performance time series storage\n- Alertmanager for alert management and routing\n- Nginx reverse proxy with TLS/SSL termination\n- VictoriaMetrics volume on additional disk /data/victoriametrics\n- TLS 1.3 encryption with auto-generated and customer-provided certificate support\n- Dashboard templates for etcd, Prometheus, and Patroni monitoring\n- Single-node configuration (no HA)\n- Automated backup and restore system with 30-day retention\n- Dedicated Docker network 'monitoring_network'\n- Email and Slack alerting integration\n- Health checks and restart policies\n- Centralized logging with retention\n- Environment variables for credentials\n- Port exposure: Grafana 3000, Prometheus 9090, VictoriaMetrics 8428, Alertmanager 9093\n- Configuration files in ./config/, certificates in ./certs/, backups in ./backups/\n```\n\n## REQUIRED OUTPUT FORMAT\n```json\n{\n  \"overall_score\": 0.0,\n  \"domain\": \"infrastructure\",\n  \"criteria_scores\": {\n        \"deployment_automation\": 0.0,\n    \"configuration_management\": 0.0,\n    \"monitoring_setup\": 0.0,\n    \"security_hardening\": 0.0,\n    \"backup_strategy\": 0.0,\n    \"disaster_recovery\": 0.0\n  },\n  \"strengths\": [\"specific strength 1\", \"specific strength 2\"],\n  \"weaknesses\": [\"specific weakness 1\", \"specific weakness 2\"],\n  \"recommendations\": [\"improvement 1\", \"improvement 2\"],\n  \"evidence\": {\n        \"deployment_automation\": \"specific evidence from prompt\",\n    \"configuration_management\": \"specific evidence from prompt\",\n    \"monitoring_setup\": \"specific evidence from prompt\",\n    \"security_hardening\": \"specific evidence from prompt\",\n    \"backup_strategy\": \"specific evidence from prompt\",\n    \"disaster_recovery\": \"specific evidence from prompt\"\n  }\n}\n```\n\n1. **Domain Focus**: Evaluate specifically for infrastructure excellence\n2. **Technology Context**: Consider docker-compose, prometheus, grafana, victoriametrics, alertmanager, nginx specific patterns\n3. **Enterprise Standards**: Apply enterprise-grade infrastructure requirements\n4. **Evidence Required**: Cite specific examples from the prompt\n5. **Scoring Precision**: Use the full 0.0-1.0 range with decimal precision",
+  "metadata": {
+    "domain": "infrastructure",
+    "technologies": [
+      "docker-compose",
+      "prometheus",
+      "grafana",
+      "victoriametrics",
+      "alertmanager",
+      "nginx"
+    ],
+    "criteria_count": 6,
+    "confidence_score": 0.9,
+    "generated_at": "2025-07-01T13:41:59.086150"
+  },
+  "instructions": "1. **Domain Focus**: Evaluate specifically for infrastructure excellence\n2. **Technology Context**: Consider docker-compose, prometheus, grafana, victoriametrics, alertmanager, nginx specific patterns\n3. **Enterprise Standards**: Apply enterprise-grade infrastructure requirements\n4. **Evidence Required**: Cite specific examples from the prompt\n5. **Scoring Precision**: Use the full 0.0-1.0 range with decimal precision",
+  "scoring_rubric": {
+    "scoring_scale": {
+      "0.9-1.0": "Excellent - Exceeds enterprise standards",
+      "0.8-0.89": "Good - Meets enterprise standards",
+      "0.7-0.79": "Acceptable - Minor improvements needed",
+      "0.6-0.69": "Conditional - Significant improvements required",
+      "0.0-0.59": "Inadequate - Major revisions required"
+    },
+    "weighted_calculation": "Sum of (criterion_score * weight) for all criteria",
+    "min_threshold": 0.7,
+    "pass_criteria": "Overall score >= 0.7 AND no criterion < 0.5"
+  }
+}

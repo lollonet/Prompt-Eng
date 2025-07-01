@@ -5,17 +5,17 @@ This module provides automatic web research capabilities for unknown technologie
 generating dynamic templates based on real-time web research.
 """
 
-from .technology_detector import TechnologyDetector
-from .web_researcher import WebResearcher
-from .template_generator import DynamicTemplateGenerator
-from .research_cache import TemplateCache, ResearchCache
+from .research_cache import ResearchCache, TemplateCache
 from .research_validator import ResearchValidator
+from .technology_detector import TechnologyDetector
+from .template_generator import DynamicTemplateGenerator
+from .web_researcher import WebResearcher
 
 __all__ = [
-    'TechnologyDetector',
-    'WebResearcher', 
-    'DynamicTemplateGenerator',
-    'TemplateCache',
-    'ResearchCache',
-    'ResearchValidator'
+    "TechnologyDetector",
+    "WebResearcher",
+    "DynamicTemplateGenerator",
+    "TemplateCache",
+    "ResearchCache",
+    "ResearchValidator",
 ]
