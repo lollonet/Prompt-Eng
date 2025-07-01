@@ -13,6 +13,8 @@ from .patroni_engine import PatroniTemplateEngine
 from .docker_engine import DockerTemplateEngine
 from .ansible_engine import AnsibleTemplateEngine
 from .mysql_engine import MySQLTemplateEngine
+from .kubernetes_engine import KubernetesTemplateEngine
+from .infrastructure_engine import InfrastructureTemplateEngine
 
 
 class TemplateEngineFactory:
@@ -35,9 +37,8 @@ class TemplateEngineFactory:
             self.register_engine(DockerTemplateEngine())
             self.register_engine(AnsibleTemplateEngine())
             self.register_engine(MySQLTemplateEngine())
-            
-            # TODO: Register other engines as they're implemented
-            # self.register_engine(KubernetesTemplateEngine())
+            self.register_engine(KubernetesTemplateEngine())
+            self.register_engine(InfrastructureTemplateEngine())
             
             self._logger.info(f"Registered {len(self._engines)} template engines")
         
