@@ -8,7 +8,7 @@ The Enterprise Prompt Generator is a modern, async-first system designed for gen
 
 ### 1. Async-First Architecture
 - **Non-blocking I/O**: All file operations, web requests, and database interactions use async/await
-- **Concurrency Control**: Semaphores and connection pooling for resource management
+- **Concurrency Control**: Semaphores and connection pooling for resource management  
 - **Performance**: Concurrent processing of multiple prompt generation requests
 
 ### 2. Result-Based Error Handling
