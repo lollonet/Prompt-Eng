@@ -36,10 +36,16 @@ class AsyncCacheManager:
         """
         async with self._cache_lock:
             if key in self._cache:
-                performance_tracker.record_cache_hit(operation_name)
+                try:
+                    performance_tracker.record_cache_hit(operation_name)
+                except Exception:
+                    pass  # Don't let performance tracking block cache operations
                 return self._cache[key]
         
-        performance_tracker.record_cache_miss(operation_name)
+        try:
+            performance_tracker.record_cache_miss(operation_name)
+        except Exception:
+            pass  # Don't let performance tracking block cache operations
         return None
     
     async def set_cached(self, key: str, value: Any, operation_name: str) -> None:
