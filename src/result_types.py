@@ -170,6 +170,19 @@ class ValidationError:
         return f"Validation failed for '{self.field}' with value '{self.value}': {self.constraint}"
 
 
+@dataclass(frozen=True)
+class ConfigurationError:
+    """Error in configuration loading or validation."""
+
+    message: str
+    source: str = "ConfigurationManager"
+    details: Optional[str] = None
+
+    def __str__(self) -> str:
+        base = f"Configuration error in {self.source}: {self.message}"
+        return f"{base} - {self.details}" if self.details else base
+
+
 # Utility functions for Result construction
 def safe_call(
     func: Callable[[], T],
