@@ -163,6 +163,17 @@ class EvaluationPromptGenerator:
             )
             templates["security_focused"] = self._get_fallback_security_template()
 
+        # Load performance template
+        performance_template_path = os.path.join(prompts_dir, "performance_evaluation_prompt.txt")
+        try:
+            with open(performance_template_path, "r") as f:
+                templates["performance_focused"] = f.read()
+        except FileNotFoundError:
+            self._logger.warning(
+                f"Performance template not found at {performance_template_path}, using fallback"
+            )
+            templates["performance_focused"] = self._get_fallback_security_template()  # Use security as fallback
+
         # Base evaluation template
         templates[
             "base_evaluation"
@@ -252,8 +263,8 @@ You are an expert evaluator specializing in {domain} assessment. Your task is to
         template_key = self._select_evaluation_template(evaluation_domain)
         template = self._prompt_templates[template_key]
 
-        # For external templates (like security_focused), use as-is with target prompt appended
-        if template_key == "security_focused" and not "{" in template:
+        # For external templates (like security_focused, performance_focused), use as-is with target prompt appended
+        if template_key in ["security_focused", "performance_focused"]:
             # External template doesn't use placeholders, append evaluation context
             evaluation_prompt = f"""{template}
 
@@ -437,15 +448,15 @@ Provide detailed analysis with specific examples and actionable recommendations.
         """Generate JSON template for criteria scoring."""
         template_items = []
         for criterion in criteria.criteria.keys():
-            template_items.append(f'    "{criterion}": 0.0')
-        return ",\n".join(template_items)
+            template_items.append(f'"{criterion}": 0.0')
+        return ",\n    ".join(template_items)
 
     def _generate_evidence_json_template(self, criteria: EvaluationCriteria) -> str:
         """Generate JSON template for evidence documentation."""
         template_items = []
         for criterion in criteria.criteria.keys():
-            template_items.append(f'    "{criterion}": "specific evidence from prompt"')
-        return ",\n".join(template_items)
+            template_items.append(f'"{criterion}": "specific evidence from prompt"')
+        return ",\n    ".join(template_items)
 
 
 class EvaluationChainOrchestrator:

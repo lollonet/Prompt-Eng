@@ -61,9 +61,13 @@ class TechnologyDetector(ITechnologyDetector):
         # Configuration
         self._similarity_threshold = 0.7
         self._cache_ttl_hours = 24
+        
+        # Initialization tracking
+        self._initialization_complete = False
+        self._initialization_task = None
 
         # Initialize knowledge base
-        asyncio.create_task(self._initialize_knowledge_base())
+        self._initialization_task = asyncio.create_task(self._initialize_knowledge_base())
 
     async def _initialize_knowledge_base(self) -> None:
         """Initialize technology knowledge base."""
@@ -78,6 +82,13 @@ class TechnologyDetector(ITechnologyDetector):
         except Exception as e:
             self._logger.error(f"Failed to initialize knowledge base: {e}")
             await self._populate_default_knowledge()
+        finally:
+            self._initialization_complete = True
+    
+    async def _ensure_initialized(self) -> None:
+        """Ensure knowledge base is initialized before operations."""
+        if not self._initialization_complete and self._initialization_task:
+            await self._initialization_task
 
     async def _load_existing_knowledge(self) -> None:
         """Load existing technology knowledge from files."""
@@ -242,6 +253,7 @@ class TechnologyDetector(ITechnologyDetector):
 
     async def detect_unknown_technologies(self, technologies: List[str]) -> List[str]:
         """Identify technologies not in knowledge base."""
+        await self._ensure_initialized()
         unknown_technologies = []
 
         for tech in technologies:
@@ -276,6 +288,7 @@ class TechnologyDetector(ITechnologyDetector):
 
     async def get_technology_profile(self, technology: str) -> Optional[TechnologyProfile]:
         """Get detailed profile for a technology."""
+        await self._ensure_initialized()
         tech_normalized = technology.lower().strip()
 
         # Check if technology is known
